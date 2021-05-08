@@ -1,8 +1,20 @@
-{% if user.is_authenticated %}
-<a class="navbar-a" href="{% url 'usuarios:logout' %}">Logout</a>
-<h1>Bienvenido, {{user}}</h1>
-{% endif %}
+<head>
+    <link rel="stylesheet" type="text/css" href="../../../static/base/styles.css" />
+</head>
 
+<ul class="navbar-container">
+    {% if user.is_authenticated %}
+        <h1 class="supertitle">Bienvenido, {{user}}</h1>
+        <div class="dropdown">
+        <li class="dropbtn">Pagos</li>
+            <div class="dropdown-content">
+                <a class="navbar-a" href="{% url 'pagos:pagos_control' %}">Control</a>
+                <a class="navbar-a" href="{% url 'pagos:pagos_ingreso' %}">Ingreso de Pagos</a>
+            </div>
+        </div>
+        <li class="navbar-item"><a class="navbar-a" href="{% url 'usuarios:logout' %}">Logout</a></li>
+    {% endif %}
+</ul>
 {% block content%}
 
 {% endblock content %}

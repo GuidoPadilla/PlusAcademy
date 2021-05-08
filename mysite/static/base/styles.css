@@ -1,0 +1,71 @@
+.supertitle { color: #fff; background-color: #333; font-family: 'Raleway',sans-serif; font-size: 30px; font-weight: 800; line-height: 35px; text-align: center; text-transform: uppercase; }
+
+.navbar-container {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+
+}
+
+.navbar-item {
+  float: left;
+}
+
+.navbar-item .navbar-a {
+  font-family: 'Raleway',sans-serif;
+  font-weight: 400;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+.navbar-item .navbar-a:hover {
+  background-color: #111;
+}
+
+body {
+  background-color:skyblue;
+}
+
+.dropbtn {
+  color: white;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: darkgray;
+}

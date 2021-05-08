@@ -18,17 +18,14 @@ def view_login(request):
                 user = authenticate(username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    return HttpResponseRedirect('../../usuarios/prueba/')
+                    return HttpResponseRedirect('../../pagos/control/')
         else:
             form = AuthenticationAddForm()
         context = {'form': form}
         return render(request, 'usuarios/login.html', context)
     else:
-        return HttpResponseRedirect('../../usuarios/prueba/')
+        return HttpResponseRedirect('../../pagos/control/')
 
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('../../usuarios/login/')
-
-def prueba_view(request):
-    return render(request, 'usuarios/prueba.html')

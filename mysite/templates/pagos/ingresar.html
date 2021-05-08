@@ -1,0 +1,16 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
+</head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% csrf_token %}
+<h1>Control de pagos</h1>
+<hr>
+<input placeholder="Codigo Estudiante"></input>
+<input placeholder="Codigo de Clase"></input>
+<input placeholder="Tipo de Pago"></input>
+<input placeholder="Cantidad"></input>
+<button>Ingresar Pago</button>
+{% endblock content %}
