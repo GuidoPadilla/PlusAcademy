@@ -45,7 +45,8 @@ def view_createuser(request):
             lastname = lastname[0:3].lower()
             
             cursor = connection.cursor() 
-            contadorUsuariosAnual = 'Select count(*) from auth_user where strftime(\''+'%Y'+'\', date_joined) = strftime(\''+'%Y'+'\', date(\''+'+now'+'\'))'
+            contadorUsuariosAnual = 'Select count(*) from auth_user where strftime(\''+'%Y'+'\', date_joined) = strftime(\''+'%Y'+'\', \''+'now'+'\')'
+            print(contadorUsuariosAnual)
             cursor.execute(contadorUsuariosAnual)
             resultado = cursor.fetchall()
             print(resultado)
@@ -59,9 +60,10 @@ def view_createuser(request):
             if form1.is_valid():
                 if form2.is_valid():
                     form1.cleaned_data['username'] = codigo
+                    print(form2.cleaned_data['fecha_nacimiento'])
                     new_user = User.objects.create_user(**form1.cleaned_data)
-                    UserExtra.objects.create(user=new_user)
-                    return HttpResponseRedirect('create/')
+                    UserExtra.objects.create(user=new_user, **form2.cleaned_data)
+                    return HttpResponseRedirect('')
 
         else:
             form1 = UserRegisterForm()
