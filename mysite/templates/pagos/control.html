@@ -6,92 +6,25 @@
 
 {% block content %}
 {% csrf_token %}
-<h1>Control de pagos</h1>
-<hr>
-<div class="filters-container">
-    <div class="filter-element">
-        <h1>Fecha de </h1><input placeholder="Fecha inicial"></input>
-    </div>
-    <div class="filter-element">
-        <h1> a </h1><input placeholder="Fecha Final"></input>
-    </div>  
-    <div class="filter-element">
-        <h1> Codigo </h1><input placeholder="Codigo del Estudiante"></input>
-    </div>  
-    <div class="filter-element">
-        <h1> Tipo de pago </h1><input placeholder="Tipo de pago"></input>
-    </div>  
-</div>
-<table style="width:100%">
-    <tr>
-        <th>Fecha</th>
-        <th>Codigo Estudiante</th>
-        <th>Nombre Estudiante</th>
-        <th>Codigo De Clase</th>
-        <th>Tipo de Pago</th>
-        <th>Cantidad</th>
-        <th>Total</th>
-        <th>Acciones</th>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128998</td>
-        <td>Oscar Joel Paredez Guzman</td>
-        <td>112</td>
-        <td>Cheque</td>
-        <td>500 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128222</td>
-        <td>Guido Sebastian Padilla Aldana</td>
-        <td>212</td>
-        <td>Transferencia</td>
-        <td>100 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128998</td>
-        <td>Oscar Joel Paredez Guzman</td>
-        <td>112</td>
-        <td>Cheque</td>
-        <td>500 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128222</td>
-        <td>Guido Sebastian Padilla Aldana</td>
-        <td>212</td>
-        <td>Transferencia</td>
-        <td>100 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128998</td>
-        <td>Oscar Joel Paredez Guzman</td>
-        <td>112</td>
-        <td>Cheque</td>
-        <td>500 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-    <tr>
-        <td>01/01/2021</td>
-        <td>128222</td>
-        <td>Guido Sebastian Padilla Aldana</td>
-        <td>212</td>
-        <td>Transferencia</td>
-        <td>100 Q</td>
-        <td>Pendiente</td>
-        <th class="acciones_tabla"><button>Editar</button><button>Eliminar</button></tr>
-    </tr>
-  </table>
+<table id="datatable_pagos">
+</table>
+<script language="javascript">
+
+    $(document).ready(function() {
+        AjaxDatatableViewUtils.initialize_table(
+            $('#datatable_pagos'),
+            "{% url 'ajax_datatable_pagos' %}",
+            {
+                processing: false,
+                autoWidth: false,
+                full_row_select: true,
+                scrollX: false
+            }, {
+                // extra_data
+                // ...
+            },
+        );
+    });
+
+</script>
 {% endblock content %}
