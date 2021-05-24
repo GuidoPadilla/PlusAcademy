@@ -5,9 +5,13 @@ from usuarios.models import Curso
 # Create your models here.
 class TipoPago(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
+    def __str__(self):
+        return self.nombre
 
 class Moneda(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
+    def __str__(self):
+        return self.nombre
 
 class Pago(models.Model):
     fecha_pago = models.DateField(auto_now_add=True)

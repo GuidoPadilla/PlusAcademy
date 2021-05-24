@@ -1,0 +1,37 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
+</head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% csrf_token %}
+<table>
+    <tr>
+        <th>Codigo</th>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>email</th>
+        <th>DPI</th>
+        <th>Telefono</th>
+        <th>Direccion</th>
+        <th>Sexo</th>
+        <th>Rol</th>
+        <th>Fecha de Nacimiento</th>
+    </tr>
+    {% for usuario in usuarios %}
+    <tr>
+        <th>{{usuario.username}}</th>
+        <th>{{usuario.first_name}}</th>
+        <th>{{usuario.last_name}}</th>
+        <th>{{usuario.email}}</th>
+        <th>{{usuario.userextra.dpi}}</th>
+        <th>{{usuario.userextra.telefono}}</th>
+        <th>{{usuario.userextra.direccion}}</th>
+        <th>{{usuario.userextra.sexo.nombre}}</th>
+        <th>{{usuario.userextra.rol.nombre}}</th>
+        <th>{{usuario.userextra.fecha_nacimiento}}</th>
+    </tr>  
+    {% endfor%}
+</table>
+{% endblock content %}

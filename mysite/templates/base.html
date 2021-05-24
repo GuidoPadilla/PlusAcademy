@@ -1,14 +1,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="../../../static/base/styles.css" />
-    <link href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
 </head>
 
-{% block extrajs %}
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-
-{% endcompress %}
 <ul class="navbar-container">
     {% if user.is_authenticated %}
         <h1 class="supertitle">Bienvenido, {{user}}</h1>
@@ -17,6 +10,13 @@
             <div class="dropdown-content">
                 <a class="navbar-a" href="{% url 'pagos:pagos_control' %}">Control</a>
                 <a class="navbar-a" href="{% url 'pagos:pagos_ingreso' %}">Ingreso de Pagos</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <li class="dropbtn">Usuarios</li>
+                <div class="dropdown-content">
+                    <a class="navbar-a" href="{% url 'usuarios:usuarios_listado' %}">Listado</a>
+                </div>
             </div>
         </div>
         <li class="navbar-item"><a class="navbar-a" href="{% url 'usuarios:logout' %}">Logout</a></li>
