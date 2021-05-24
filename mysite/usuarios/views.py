@@ -45,10 +45,11 @@ def view_createuser(request):
             lastname = lastname[0:3].lower()
             
             cursor = connection.cursor() 
-            # esta en es sqlLite por si se cambia de base de datos se debe de cambiar
             contadorUsuariosAnual = 'Select count(*) from auth_user where strftime(\''+'%Y'+'\', date_joined) = strftime(\''+'%Y'+'\', \''+'now'+'\')'
+            print(contadorUsuariosAnual)
             cursor.execute(contadorUsuariosAnual)
             resultado = cursor.fetchall()
+            print(resultado)
             resultado = int(list(resultado[0])[0])+1
 
             # print(resultado)
@@ -59,6 +60,7 @@ def view_createuser(request):
             if form1.is_valid():
                 if form2.is_valid():
                     form1.cleaned_data['username'] = codigo
+                    print(form2.cleaned_data['fecha_nacimiento'])
                     new_user = User.objects.create_user(**form1.cleaned_data)
                     UserExtra.objects.create(user=new_user, **form2.cleaned_data)
                     return HttpResponseRedirect('')
@@ -71,3 +73,9 @@ def view_createuser(request):
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
+def view_usuarios(request):
+    usuarios = User.objects.all()
+    context = {
+        'usuarios': usuarios
+    }
+    return render(request, 'usuarios/control.html', context)

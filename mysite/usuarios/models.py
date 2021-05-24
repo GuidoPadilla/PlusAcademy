@@ -12,8 +12,8 @@ class Curso(models.Model):
     codigo = models.CharField(unique=True, max_length=50)
     nombre = models.CharField(unique=False, max_length=50)
     
-    def str(self):
-        return self.nombre
+    def __str__(self):
+        return self.codigo
 
 class Sexo(models.Model):
     nombre = models.CharField(unique=True, max_length=25)
