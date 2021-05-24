@@ -20,3 +20,6 @@ class Pago(models.Model):
     tipo_pago= models.ForeignKey(TipoPago, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
     moneda = models.ForeignKey(Moneda, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return 'Pago ' + self.user.username

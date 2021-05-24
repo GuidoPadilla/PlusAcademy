@@ -63,7 +63,7 @@ def view_createuser(request):
                     print(form2.cleaned_data['fecha_nacimiento'])
                     new_user = User.objects.create_user(**form1.cleaned_data)
                     UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                    return HttpResponseRedirect('')
+                    return HttpResponseRedirect('../control/')
 
         else:
             form1 = UserRegisterForm()

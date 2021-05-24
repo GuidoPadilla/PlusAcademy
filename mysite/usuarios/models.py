@@ -50,3 +50,6 @@ class UserExtra(models.Model):
     sexo = models.ForeignKey(Sexo, on_delete=models.CASCADE)
     nivel_academico = models.ForeignKey(NivelAcademico, on_delete=models.CASCADE)
     rol = models.ForeignKey(Rol, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username

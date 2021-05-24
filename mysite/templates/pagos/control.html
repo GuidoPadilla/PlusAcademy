@@ -12,8 +12,8 @@
         <th>Fecha Pago</th>
         <th>Codigo De Curso</th>
         <th>Tipo de pago</th>
-        <th>Monto</th>
         <th>Tipo de Moneda</th>
+        <th>Monto</th>
         <th>Acciones</th>
     </tr>
     {% for pago in pagos %}
@@ -22,8 +22,8 @@
         <th>{{pago.fecha_pago}}</th>
         <th>{{pago.codigo_curso.codigo}}</th>
         <th>{{pago.tipo_pago.nombre}}</th>
-        <th>{{pago.cantidad}}</th>
         <th>{{pago.moneda.nombre}}</th>
+        <th>{{pago.cantidad}}</th>
         <th><button>Eliminar</button><button>Editar</button></th>
     </tr>  
     {% endfor%}

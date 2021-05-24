@@ -5,12 +5,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% csrf_token %}
-<h1>Control de pagos</h1>
+<h1>Ingresar Pago</h1>
 <hr>
-<input placeholder="Codigo Estudiante"></input>
-<input placeholder="Codigo de Clase"></input>
-<input placeholder="Tipo de Pago"></input>
-<input placeholder="Cantidad"></input>
-<button>Ingresar Pago</button>
+
+<form action="" method="post">
+		<div class="form-container">
+			{% csrf_token %}
+			{{form}}
+		</div>
+	<div class="btn-container">
+		<input class="btn btn-buscar" type="submit" value="Ingresar Pago">
+	</div>
+</form>
 {% endblock content %}
