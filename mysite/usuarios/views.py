@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from usuarios.models import UserExtra
 from django.db import connection
+from django.core.serializers import serialize
 import datetime
 
 def view_login(request):
@@ -32,6 +33,12 @@ def view_login(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('../../usuarios/login/')
+
+def lista_usuarios(request):
+    if request.is_ajax() and request.method == 'POST':
+        users = UserExtra.objects.all()
+        #users = users.filter(userextra__rol__nombre='estudiante')
+        return JsonResponse({"data":[x.toDict() for x in users]}, safe=False) 
 
 def view_createuser(request):
     if request.user.is_authenticated:
@@ -74,8 +81,4 @@ def view_createuser(request):
         return HttpResponseRedirect('../usuarios/login/')
 
 def view_usuarios(request):
-    usuarios = User.objects.all()
-    context = {
-        'usuarios': usuarios
-    }
-    return render(request, 'usuarios/control.html', context)
+    return render(request, 'usuarios/control.html')

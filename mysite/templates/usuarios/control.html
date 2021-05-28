@@ -1,37 +1,75 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
-</head>
-
 {% extends 'base.html' %}
+<head>
+    {% block scripts %}
+    <link rel="stylesheet" type="text/css" href="../../static/general/styles.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    {% endblock scripts %}
+</head>
 
 {% block content %}
 {% csrf_token %}
-<table>
-    <tr>
-        <th>Codigo</th>
-        <th>Nombres</th>
-        <th>Apellidos</th>
-        <th>Correo Electronico</th>
-        <th>DPI</th>
-        <th>Telefono</th>
-        <th>Direccion</th>
-        <th>Sexo</th>
-        <th>Rol</th>
-        <th>Fecha de Nacimiento</th>
-    </tr>
-    {% for usuario in usuarios %}
-    <tr>
-        <th>{{usuario.username}}</th>
-        <th>{{usuario.first_name}}</th>
-        <th>{{usuario.last_name}}</th>
-        <th>{{usuario.email}}</th>
-        <th>{{usuario.userextra.dpi}}</th>
-        <th>{{usuario.userextra.telefono}}</th>
-        <th>{{usuario.userextra.direccion}}</th>
-        <th>{{usuario.userextra.sexo.nombre}}</th>
-        <th>{{usuario.userextra.rol.nombre}}</th>
-        <th>{{usuario.userextra.fecha_nacimiento}}</th>
-    </tr>  
-    {% endfor%}
+<table id="table_user" class="table table-dark table-hover" style="width:100%">
+    <thead>
+        <tr>
+            <th>Codigo</th>
+            <th>Nombres</th>
+            <th>Correo Electronico</th>
+            <th>DPI</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Sexo</th>
+            <th>Rol</th>
+            <th>Edad</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Codigo</th>
+            <th>Nombres</th>
+            <th>Correo Electronico</th>
+            <th>DPI</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Sexo</th>
+            <th>Rol</th>
+            <th>Edad</th>
+        </tr>
+    </tfoot>
 </table>
+<script type="text/javascript">
+    $(document).ready(() => {
+        $('#table_user').DataTable({
+            ajax: {
+                    url: '/usuarios/usuarios/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        content: 'xxx',
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    dataSrc: 'data'
+                },
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+                },
+                columns: [
+                    { data: 'codigo' },
+                    { data: 'nombres' },
+                    { data: 'correo' },
+                    { data: 'dpi' },
+                    { data: 'telefono' },
+                    { data: 'direccion' },
+                    { data: 'sexo' },
+                    { data: 'rol' },
+                    { data: 'edad' }
+                ],
+                rowId: 'codigo',
+        })
+        
+    })
+</script>
 {% endblock content %}

@@ -2,15 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from usuarios.models import Curso
 
+from datetime import datetime
+
 # Create your models here.
 class TipoPago(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
     def __str__(self):
         return self.nombre
+    def natural_key(self):
+        return self.nombre
 
 class Moneda(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
     def __str__(self):
+        return self.nombre
+    def natural_key(self):
         return self.nombre
 
 class Pago(models.Model):
@@ -23,3 +29,5 @@ class Pago(models.Model):
 
     def __str__(self):
         return 'Pago ' + self.user.username
+    def toDict (self):
+        return {'fecha_pago': self.fecha_pago.strftime('%d/%m/%Y'), 'user': self.user.username, 'id': self.id, 'cantidad': self.cantidad, 'codigo_curso': self.codigo_curso.codigo, 'moneda': self.moneda.nombre, 'tipo_pago': self.tipo_pago.nombre}
