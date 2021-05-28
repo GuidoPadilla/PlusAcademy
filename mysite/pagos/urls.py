@@ -6,4 +6,5 @@ app_name = "pagos"
 urlpatterns = [
     path('control/', views.control_view, name='pagos_control'),
     path('ingreso/', views.ingreso_view, name='pagos_ingreso'),
+    path('pagos/', views.pagos, name='lista_pagos')
 ]
