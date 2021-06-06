@@ -39,6 +39,13 @@ def pagos(request):
             response_data['result'] = 'ERROR'
             response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
             return HttpResponse(serialize('json', response_data), content_type='application/json')
+            
+def control_pagos(request):
+    pagos = Pago.objects.all()
+    context = {
+        'pagos': pagos
+    }
+    return render(request, 'pagos/control_excel.html', context)
 
 def ingreso_view(request):
     if request.user.is_authenticated:

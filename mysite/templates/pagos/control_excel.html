@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pago in pagos %}
+                <tr>
+                    <td>{{pago.id}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
