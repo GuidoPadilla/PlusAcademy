@@ -25,5 +25,6 @@ urlpatterns = [
     path('create/', views.view_createuser, name='createuser_view'),
     path('control/', views.view_usuarios, name='usuarios_listado'),
     path('usuarios/', views.lista_usuarios, name='lista_estudiante'),
-    path('create_curso/', views.view_creatcurso, name='create_curso')
+    path('create_curso/', views.view_creatcurso, name='create_curso'),
+    path('asignar_curso/', views.view_createasignacion, name='asignar_curso')
 ]

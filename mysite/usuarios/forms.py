@@ -23,7 +23,7 @@ class LlevaCursoRegisterForm(ModelForm):
 
     class Meta:
         model = LlevaCurso
-        fields = ['curso', 'fecha_llevado']
+        fields = ['user','curso', 'fecha_llevado']
 
 class CursoRegisterForm(ModelForm):
     class Meta:
