@@ -15,6 +15,10 @@ class NivelAcademico(models.Model):
 class Curso(models.Model):
     codigo = models.CharField(unique=True, max_length=50)
     nombre = models.CharField(unique=False, max_length=50)
+    inscripcion = models.FloatField(default = 500.00)
+    cuota = models.FloatField(default = 1000.00)
+    otros = models.FloatField(default = 0.00)
+    duracion = models.IntegerField(default = 5)
     
     def __str__(self):
         return self.codigo
@@ -32,7 +36,6 @@ class Sexo(models.Model):
 class Rol(models.Model):
     codigo = models.CharField(unique=True, max_length=50)
     nombre = models.CharField(unique=True, max_length=25)
-    
     def __str__(self):
         return self.nombre
     def natural_key(self):

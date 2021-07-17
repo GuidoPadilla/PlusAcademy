@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
-from usuarios.models import Curso, UserExtra
+from .models import Curso, UserExtra, LlevaCurso
 
 class AuthenticationAddForm(forms.Form):
     username = forms.CharField(label="Nombre de Usuario", max_length=150)
@@ -11,10 +11,21 @@ class UserRegisterForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 class UserExtraRegisterForm(ModelForm):
 
     class Meta:
         model = UserExtra
         fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol']
+
+class LlevaCursoRegisterForm(ModelForm):
+
+    class Meta:
+        model = LlevaCurso
+        fields = ['curso', 'fecha_llevado']
+
+class CursoRegisterForm(ModelForm):
+    class Meta:
+        model = Curso
+        fields = ['codigo', 'nombre', 'inscripcion', 'cuota', 'otros', 'duracion']
