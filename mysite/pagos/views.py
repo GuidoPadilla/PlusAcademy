@@ -1,3 +1,5 @@
+from datetime import datetime
+from datetime import date
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -6,6 +8,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from .models import Pago
+from usuarios.models import LlevaCurso
+from dateutil.relativedelta import relativedelta
+from django.db.models import Sum
 from .forms import PaymentRegisterForm
 from django.core.serializers import serialize
 import json
@@ -13,6 +18,9 @@ import json
 # Create your views here.
 def control_view(request):
     return render(request, 'pagos/control.html')
+
+def saldo_view(request):
+    return render(request, 'pagos/saldo_consulta.html')
 
 def pagos(request):
     if request.is_ajax() and request.method == 'POST':
@@ -34,6 +42,63 @@ def pagos(request):
                 if cod_usuario != '':
                     pagos = pagos.filter(user__username__contains=cod_usuario)
             return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+        else:
+            response_data = {}
+            response_data['result'] = 'ERROR'
+            response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+            return HttpResponse(serialize('json', response_data), content_type='application/json')
+
+def saldos(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaSaldos':
+            cursosLlevados = LlevaCurso.objects.all()
+            pagos = Pago.objects.all()
+            hoy = date.today()
+            for cursoLlevado in cursosLlevados:
+                lista = []
+                pagos_usuario = pagos.filter(user__username=cursoLlevado.user.username)
+                pagos_usuario = pagos_usuario.filter(codigo_curso__codigo=cursoLlevado.curso.codigo)
+                total_inscripcion = pagos_usuario.filter(tipo_pago__nombre='Inscripcion').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+                pagos_inscripcion = cursoLlevado.curso.inscripcion- total_inscripcion
+                if pagos_inscripcion != 0:
+                    fecha_inscripcion = cursoLlevado.fecha_llevado + relativedelta(months=1)
+                    if  hoy > fecha_inscripcion:
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                        ,'cantidad': cursoLlevado.curso.inscripcion
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                    else: 
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Por Vencer'
+                        ,'cantidad': cursoLlevado.curso.inscripcion
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                total_cuota = pagos_usuario.filter(tipo_pago__nombre='Cuota').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+                pagos_cuota = cursoLlevado.curso.cuota*cursoLlevado.curso.duracion - total_cuota
+                if pagos_cuota != 0:
+                    faltan = pagos_cuota/cursoLlevado.curso.cuota
+                    llevados = cursoLlevado.curso.duracion - faltan
+                    fecha_cuota = hoy
+                    for i in range(int(faltan)):
+                        fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=llevados+i+1)
+                        if  hoy > fecha_cuota:
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                            ,'cantidad': cursoLlevado.curso.cuota
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        else: 
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Por Vencer'
+                            ,'cantidad': cursoLlevado.curso.cuota
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+            return JsonResponse({"data":lista}, safe=False)
         else:
             response_data = {}
             response_data['result'] = 'ERROR'

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm
+from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from usuarios.models import UserExtra
+from .models import Curso, UserExtra, LlevaCurso
 from django.db import connection
 from django.core.serializers import serialize
 import datetime
@@ -45,7 +45,8 @@ def view_createuser(request):
         if request.method == "POST":
             form1 = UserRegisterForm(request.POST)
             form2 = UserExtraRegisterForm(request.POST)
-            now = datetime.datetime.now()
+            form3 = LlevaCursoRegisterForm(request.POST)
+            """ now = datetime.datetime.now()
             currYear = '{:02d}'.format(now.year)
             currYear = currYear[2:4]
             lastname = request.POST['last_name']
@@ -63,20 +64,36 @@ def view_createuser(request):
             # resultado = resultado+1
             resultado = str(resultado).zfill(3)
 
-            codigo = lastname+currYear+resultado
+            codigo = lastname+currYear+resultado """
             if form1.is_valid():
                 if form2.is_valid():
-                    form1.cleaned_data['username'] = codigo
-                    print(form2.cleaned_data['fecha_nacimiento'])
-                    new_user = User.objects.create_user(**form1.cleaned_data)
-                    UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                    return HttpResponseRedirect('../control/')
+                    if form3.is_valid():
+                        """ form1.cleaned_data['username'] = codigo """
+                        new_user = User.objects.create_user(**form1.cleaned_data)
+                        UserExtra.objects.create(user=new_user, **form2.cleaned_data)
+                        LlevaCurso.objects.create(user=new_user, **form3.cleaned_data)
+                        return HttpResponseRedirect('../control/')
 
         else:
             form1 = UserRegisterForm()
             form2 = UserExtraRegisterForm()
-        context = {'form1': form1, 'form2': form2}
+            form3 = LlevaCursoRegisterForm()
+        context = {'form1': form1, 'form2': form2, 'form3': form3}
         return render(request, 'usuarios/create_user.html', context)
+    else:
+        return HttpResponseRedirect('../usuarios/login/')
+
+def view_creatcurso(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form1 = CursoRegisterForm(request.POST)
+            if form1.is_valid():
+                new_curso = Curso.objects.create(**form1.cleaned_data)
+                return HttpResponseRedirect('../create_curso/')
+        else:
+            form1 = CursoRegisterForm()
+        context = {'form1': form1}
+        return render(request, 'usuarios/create_curso.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
