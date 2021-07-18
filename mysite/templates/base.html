@@ -17,6 +17,8 @@
         <li class="dropbtn">Pagos</li>
             <div class="dropdown-content">
                 <a class="navbar-a" href="{% url 'pagos:pagos_control' %}">Control de Pagos</a>
+                <a class="navbar-a" href="{% url 'pagos:pagos_solicitados_eliminar' %}">Pagos Solicitados a Eliminar</a>
+                <a class="navbar-a" href="{% url 'pagos:pagos_eliminados' %}">Pagos Eliminados</a>
                 <a class="navbar-a" href="{% url 'pagos:pagos_ingreso' %}">Ingreso de Pagos</a>
                 <a class="navbar-a" href="{% url 'pagos:pagos_saldo' %}">Saldos</a>
             </div>

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Pago
+from .models import Pago, EliminacionPagos
 from usuarios.models import LlevaCurso
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
@@ -27,7 +27,7 @@ def pagos(request):
         action = request.POST.get('action')
         params = request.POST.get('params')
         if action == 'listaPagos':
-            pagos = Pago.objects.all()
+            pagos = Pago.objects.filter(status=1)
             if params:
                 parametros = params.split(',')
                 f_ini = parametros[0]
@@ -47,6 +47,124 @@ def pagos(request):
             response_data['result'] = 'ERROR'
             response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
             return HttpResponse(serialize('json', response_data), content_type='application/json')
+
+def solicitarEliminacionPago(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        id_pago = json.loads(request.POST.get('pagos_data')).get('pago_id')
+        if action == 'pagoEliminacion':
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 2
+            pago.save()
+            pagosExistentes = EliminacionPagos.objects.filter(pago=id_pago)
+            if not pagosExistentes:
+                EliminacionPagos.objects.create(pago=pago, solicitadoPor=request.user, respuesta=None)
+            else:
+                pagosExistentes.delete()
+                EliminacionPagos.objects.create(pago=pago, solicitadoPor=request.user, respuesta=None)
+            response_data = {}
+            response_data['result'] = 'CONFIRMADO'
+            return JsonResponse(response_data)
+
+def pagos_solicitados_eliminar_view(request):
+    return render(request, 'pagos/pagos_solicitados_eliminar.html')
+
+def solicitud_eliminacion_pago(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        id_pago = json.loads(request.POST.get('pagos_data')).get('pago_id')
+        if action == 'aceptarSolicitudEliminacionPago':
+            # pago = Pago.objects.filter(id=id_pago)
+            # pago.update(status=0)
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 0
+            pago.save()
+            eliminacionPago = EliminacionPagos.objects.filter(pago=id_pago)
+
+            eliminacionPago = eliminacionPago.first()
+            print(eliminacionPago)
+            eliminacionPago.procesadoPor = request.user
+            eliminacionPago.respuesta = 0
+            eliminacionPago.save()
+            response_data = {}
+            response_data['result'] = 'CONFIRMADA SOLICITUD DE ELIMINACION DEL PAGO'
+            return JsonResponse(response_data)
+        elif action == 'rechazarSolicitudEliminacionPago':
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 1
+            pago.save()
+            eliminacionPago = EliminacionPagos.objects.filter(pago=id_pago)
+            eliminacionPago = eliminacionPago.first()
+            eliminacionPago.procesadoPor = request.user
+            eliminacionPago.respuesta = 1
+            eliminacionPago.save()
+            response_data = {}
+            response_data['result'] = 'RECHAZADA SOLICITUD DE ELIMINACION DEL PAGO'
+            return JsonResponse(response_data)
+    else:
+        response_data = {}
+        response_data['result'] = 'ERROR'
+        response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+        return HttpResponse(serialize('json', response_data), content_type='application/json')  
+
+def pagos_eliminados(request):
+    return render(request, 'pagos/pagos_eliminados.html')
+
+def pagos_eliminados_list(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaPagos':
+            pagos = Pago.objects.filter(status=0)
+            if params:
+                parametros = params.split(',')
+                f_ini = parametros[0]
+                f_fin = parametros[1]
+                cod_usuario = parametros[2]
+                if f_ini != '' and f_fin == '':
+                    pagos = pagos.filter(fecha_pago__gte=f_ini)
+                if f_fin != '' and f_ini == '':
+                    pagos = pagos.filter(fecha_pago__lte=f_fin)
+                if f_fin != '' and f_ini != '':
+                    pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
+                if cod_usuario != '':
+                    pagos = pagos.filter(user__username__contains=cod_usuario)
+            return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+    else:
+        response_data = {}
+        response_data['result'] = 'ERROR'
+        response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+        return HttpResponse(serialize('json', response_data), content_type='application/json')
+
+def pagos_pendientes(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaPagos':
+            pagos = Pago.objects.filter(status=2)
+            if params:
+                parametros = params.split(',')
+                f_ini = parametros[0]
+                f_fin = parametros[1]
+                cod_usuario = parametros[2]
+                if f_ini != '' and f_fin == '':
+                    pagos = pagos.filter(fecha_pago__gte=f_ini)
+                if f_fin != '' and f_ini == '':
+                    pagos = pagos.filter(fecha_pago__lte=f_fin)
+                if f_fin != '' and f_ini != '':
+                    pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
+                if cod_usuario != '':
+                    pagos = pagos.filter(user__username__contains=cod_usuario)
+            return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+        else:
+            response_data = {}
+            response_data['result'] = 'ERROR'
+            response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+            return HttpResponse(serialize('json', response_data), content_type='application/json')
+
 
 def saldos(request):
     if request.is_ajax() and request.method == 'POST':

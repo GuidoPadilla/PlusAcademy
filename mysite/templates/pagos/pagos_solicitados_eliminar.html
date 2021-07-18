@@ -22,13 +22,29 @@
             padding-left: 1.5em;
         }
         /* Style buttons */
-        .btn {
-        background-color: DodgerBlue; /* Blue background */
+        #btn1 {
+        background-color: rgb(255, 56, 56); /* Blue background */
         border: none; /* Remove borders */
         color: white; /* White text */
         padding: 8px 10px; /* Some padding */
         font-size: 14px; /* Set a font size */
         cursor: pointer; /* Mouse pointer on hover */
+        margin-left: 10px;
+        }
+        #btn2 {
+        background-color: rgb(0, 228, 19); /* Blue background */
+        border: none; /* Remove borders */
+        color: white; /* White text */
+        padding: 8px 10px; /* Some padding */
+        font-size: 14px; /* Set a font size */
+        cursor: pointer; /* Mouse pointer on hover */
+        margin-left: 10px;
+        }
+        #btn1:hover {
+            background-color: rgb(214, 0, 0);
+        }
+        #btn2:hover {
+            background-color: rgb(0, 180, 15);
         }
 
         /* Darker background on mouse-over */
@@ -45,7 +61,16 @@
             border-radius: 5px;
             border: none;
         }
-        .modal-confirm .modal-header {
+        .modal-confirm .modal-header1 {
+            background: #ff3b3b;
+            border-bottom: none;   
+            position: relative;
+            text-align: center;
+            margin: -20px -20px 0;
+            border-radius: 5px 5px 0 0;
+            padding: 35px;
+        }
+        .modal-confirm .modal-header2 {
             background: #47c9a2;
             border-bottom: none;   
             position: relative;
@@ -185,55 +210,36 @@
             </tr>
         </tfoot>
     </table>
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog mw-100 w-50" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Solicitar Eliminación del Pago</h4>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table id="pago_details" class="table table-bordered" style="width:70%; margin:auto;">
-                                <thead>
-                                  <tr>
-                                        <th>Codigo Estudiante</th>
-                                        <th>Codigo Curso</th>
-                                        <th>Tipo de Pago</th>
-                                        <th>Fecha</th>
-                                        <th>Tipo de Moneda</th>
-                                        <th>Monto</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                    <tr></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary " id="btn-solicitar-eliminacion">Solicitar Eliminación</button>
-            </div>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
     <!-- Modal HTML -->
     <div id="modalConfirmation" class="modal fade">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
-                <div class="modal-header justify-content-center">
+                <div class="modal-header2 justify-content-center">
                     <div class="icon-box">
                         <i class="fa fa-check"></i>
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body text-center">
-                    <h4>Exito!</h4>	
-                    <p>Has solicitado la eliminacion del pago</p>
+                    <h4>Confirmado!</h4>	
+                    <p>Has confirmado eliminacion del pago</p>
+                    <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalRejection" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header1 justify-content-center">
+                    <div class="icon-box">
+                        <i class="fa fa-times"></i>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Rechazado!</h4>	
+                    <p>Has rechazado la eliminacion del pago</p>
                     <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
                 </div>
             </div>
@@ -241,21 +247,6 @@
     </div>
 </div>
 <script type="text/javascript">
-    /* $.fn.dataTable.ext.search.push(
-        ( settings, data, dataIndex ) => {
-            const min = $('#start_date').val().toLocaleString('es-US', {dateStyle: 'short'})
-            const max = $('#finish_date').val().toLocaleString('es-US', {dateStyle: 'short'})
-            const dateColumn = data[1].toLocaleString('es-US', {dateStyle: 'short'})
-            console.log(min)
-            console.log(max)
-            console.log(dateColumn)
-            if ( dateColumn>min && dateColumn<max )
-            {
-                return true
-            }
-            return false
-        }
-    ) */
     $.fn.dataTable.ext.search.push(
         ( settings, data, dataIndex ) => {
             const code = $('#user_code').val()
@@ -270,7 +261,7 @@
     $(document).ready(() => {
         let table = $('#data_table').DataTable({
             ajax: {
-                    url: '/pagos/pagos/',
+                    url: '/pagos/pagos_pendientes/',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -300,7 +291,7 @@
                     {
                         data: null,
                         orderable: false,
-                        defaultContent: '<button class="btn"><i class="fa fa-trash"></i> Solicitar Eliminación</button>',
+                        defaultContent: '<button id="btn1" class="btn"><i class="fa fa-ban"></i> Rechazar Eliminación</button><button class="btn" id="btn2"><i class="fa fa-check"></i> Aceptar Eliminación</button>',
                      },
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
@@ -331,66 +322,55 @@
         $('#user_code').keyup( () => {
             table.draw();
         })
-        // Solicitar Eliminacion de Pago
-        $('#data_table').on('click', '.btn', function () {
+
+        $('#data_table').on('click', '#btn1', function() {
             var data = table.row( $(this).parents('tr') ).data();
-            var list = [
-                {
-                    user: data.user,
-                    codigo_curso: data.codigo_curso,
-                    tipo_pago: data.tipo_pago,
-                    fecha_pago: data.fecha_pago,
-                    tipo_moneda: data.moneda,
-                    monto: data.cantidad
+            console.log(data)
+            var dataSent = {
+                'pago_id': data.id
+            }
+            $.ajax({
+                url: '../solicitud_eliminacion_pago/',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    content: "xxx",
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    action: 'rechazarSolicitudEliminacionPago',
+                    'pagos_data': JSON.stringify(dataSent)
+                },
+                success: (response) => {
+                    $('#modalRejection').modal('show')
+                    $('#data_table').DataTable().ajax.reload();
+                },
+                error: (response) => {
+                    console.log(response)
                 }
-            ]
-            var pago_details_table = $('table#pago_details').DataTable({
-                "sDom": "frt",
-                "searching": false,
-                "paging": false,
-                "ordering": false,
-                "retrieve": true,
-                "data": list,
-                "columns": [
-                  { data: 'user' },
-                  { data: 'codigo_curso' },
-                  { data: 'tipo_pago' },
-                  { data: 'fecha_pago' },
-                  { data: 'tipo_moneda' },
-                  { data: 'monto' },
-                ],
             })
-            pago_details_table.clear();
-                for (var k = 0; k < list.length; k++){
-                    pago_details_table.row.add(list[k]);      
+        })
+        $('#data_table').on('click', '#btn2', function() {
+            var data = table.row( $(this).parents('tr') ).data();
+            console.log(data)
+            var dataSent = {
+                'pago_id': data.id
+            }
+            $.ajax({
+                url: '../solicitud_eliminacion_pago/',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    content: "xxx",
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    action: 'aceptarSolicitudEliminacionPago',
+                    'pagos_data': JSON.stringify(dataSent)
+                },
+                success: (response) => {
+                    $('#modalConfirmation').modal('show')
+                    $('#data_table').DataTable().ajax.reload();
+                },
+                error: (response) => {
+                    console.log(response)
                 }
-            pago_details_table.draw();
-            $('#myModal').modal('show');
-
-
-            $('#btn-solicitar-eliminacion').unbind().on('click', function() {
-                var dataSent = {
-                    'pago_id': data.id
-                }
-                $.ajax({
-                    url: '../solicitar_eliminacion/',
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        content: "xxx",
-                        csrfmiddlewaretoken: "{{ csrf_token }}",
-                        action: 'pagoEliminacion',
-                        'pagos_data': JSON.stringify(dataSent)
-                    },
-                    success: (response) => {
-                        $('#modalConfirmation').modal('show')
-                        $('#myModal').modal('hide')
-                        $('#data_table').DataTable().ajax.reload();
-                    },
-                    error: (response) => {
-                        console.log(response)
-                    }
-                })
             })
         })
     })
