@@ -169,7 +169,6 @@
                 <th>Tipo de pago</th>
                 <th>Tipo de Moneda</th>
                 <th>Monto</th>
-                <th>Acciones</th>
             </tr>
         </thead>
         <tfoot>
@@ -181,64 +180,9 @@
                 <th>Tipo de pago</th>
                 <th>Tipo de Moneda</th>
                 <th>Monto</th>
-                <th>Acciones</th>
             </tr>
         </tfoot>
     </table>
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog mw-100 w-50" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Solicitar Eliminación del Pago</h4>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table id="pago_details" class="table table-bordered" style="width:70%; margin:auto;">
-                                <thead>
-                                  <tr>
-                                        <th>Codigo Estudiante</th>
-                                        <th>Codigo Curso</th>
-                                        <th>Tipo de Pago</th>
-                                        <th>Fecha</th>
-                                        <th>Tipo de Moneda</th>
-                                        <th>Monto</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                    <tr></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary " id="btn-solicitar-eliminacion">Solicitar Eliminación</button>
-            </div>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <!-- Modal HTML -->
-    <div id="modalConfirmation" class="modal fade">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header justify-content-center">
-                    <div class="icon-box">
-                        <i class="fa fa-check"></i>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body text-center">
-                    <h4>Exito!</h4>	
-                    <p>Has solicitado la eliminacion del pago</p>
-                    <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 <script type="text/javascript">
     /* $.fn.dataTable.ext.search.push(
@@ -270,7 +214,7 @@
     $(document).ready(() => {
         let table = $('#data_table').DataTable({
             ajax: {
-                    url: '/pagos/pagos/',
+                    url: '/pagos/pagos_eliminados_list/',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -297,11 +241,6 @@
                     { data: 'tipo_pago' },
                     { data: 'moneda' },
                     { data: 'cantidad' },
-                    {
-                        data: null,
-                        orderable: false,
-                        defaultContent: '<button class="btn"><i class="fa fa-trash"></i> Solicitar Eliminación</button>',
-                     },
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
                 rowGroup: {
@@ -330,68 +269,6 @@
         }) */
         $('#user_code').keyup( () => {
             table.draw();
-        })
-        // Solicitar Eliminacion de Pago
-        $('#data_table').on('click', '.btn', function () {
-            var data = table.row( $(this).parents('tr') ).data();
-            var list = [
-                {
-                    user: data.user,
-                    codigo_curso: data.codigo_curso,
-                    tipo_pago: data.tipo_pago,
-                    fecha_pago: data.fecha_pago,
-                    tipo_moneda: data.moneda,
-                    monto: data.cantidad
-                }
-            ]
-            var pago_details_table = $('table#pago_details').DataTable({
-                "sDom": "frt",
-                "searching": false,
-                "paging": false,
-                "ordering": false,
-                "retrieve": true,
-                "data": list,
-                "columns": [
-                  { data: 'user' },
-                  { data: 'codigo_curso' },
-                  { data: 'tipo_pago' },
-                  { data: 'fecha_pago' },
-                  { data: 'tipo_moneda' },
-                  { data: 'monto' },
-                ],
-            })
-            pago_details_table.clear();
-                for (var k = 0; k < list.length; k++){
-                    pago_details_table.row.add(list[k]);      
-                }
-            pago_details_table.draw();
-            $('#myModal').modal('show');
-
-
-            $('#btn-solicitar-eliminacion').unbind().on('click', function() {
-                var dataSent = {
-                    'pago_id': data.id
-                }
-                $.ajax({
-                    url: '../solicitar_eliminacion/',
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        content: "xxx",
-                        csrfmiddlewaretoken: "{{ csrf_token }}",
-                        action: 'pagoEliminacion',
-                        'pagos_data': JSON.stringify(dataSent)
-                    },
-                    success: (response) => {
-                        $('#modalConfirmation').modal('show')
-                        $('#myModal').modal('hide')
-                        $('#data_table').DataTable().ajax.reload();
-                    },
-                    error: (response) => {
-                        console.log(response)
-                    }
-                })
-            })
         })
     })
 </script>
