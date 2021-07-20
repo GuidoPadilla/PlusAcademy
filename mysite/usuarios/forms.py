@@ -11,8 +11,17 @@ class UserRegisterForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-
+        fields= ('username', 'first_name', 'last_name', 'email')
+        '''
+        'user': forms.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+        'dpi': forms.CharField(unique=True, max_length=13)
+        'telefono': forms.CharField(unique=False, max_length=15)
+        'direccion': forms.CharField(unique=False, max_length=500)
+        'fecha de nacimiento': forms.DateField()
+        'sexo': forms.ForeignKey(Sexo, on_delete=models.CASCADE)
+        'Nivel academico': forms.ForeignKey(NivelAcademico, on_delete=models.CASCADE)
+        'Rol': forms.ForeignKey(Rol, on_delete=models.CASCADE)
+    '''
 class UserExtraRegisterForm(ModelForm):
 
     class Meta:

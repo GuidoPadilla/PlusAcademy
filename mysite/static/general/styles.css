@@ -3,7 +3,7 @@ h1 { color: #000; font-size: 24px; font-weight: 800; line-height: 40px; text-tra
 
 
 * {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Greycliff cf Heavy', sans-serif;
 }
 
 hr { display: block; height: 1px;
@@ -35,6 +35,7 @@ ul {
 .form-container {
   margin: 40px 0;
   display: flex;
+  background-color: #53BDD4;
   /* flex-direction: row; /* change this to row instead of 'column' */
   /* flex-wrap:wrap; /* added flex-wrap */
   justify-content:space-evenly;
@@ -42,6 +43,7 @@ ul {
 
 .form-container label{
   font-weight: 700;
+  background-color: #53BDD4
 }
 
 .btn-container {
@@ -54,6 +56,7 @@ ul {
   height: 300px;
   width: 100%;
   overflow: auto;
+  background-color: #53BDD4;
   border:1px solid #000;
 }
 
@@ -61,6 +64,7 @@ ul {
   display: flex;
   justify-content: center;
   margin-top:20px;
+  background-color: #53BDD4;
 }
 
 .reporte-a {
@@ -76,13 +80,14 @@ ul {
 }
 
 .reporte-a:hover {
-  background-color:#111;
+  background-color:#53BDD4;
 }
 
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  background-color: #53BDD4;
 }
 
 td, th {

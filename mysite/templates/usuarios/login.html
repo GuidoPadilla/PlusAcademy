@@ -1,12 +1,16 @@
 <head>
-    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
+    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" /> 
 </head>
 
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Login</h1>
+
+<img src="imagotipo.jpg">
+<center><h1>Login</h1></center>
 <hr>
+
+<body background="#53BDD4"> 
 <form action="" method="post">
 		<div class="form-container">
 			{% csrf_token %}
@@ -17,3 +21,4 @@
 	</div>
 </form>
 {% endblock content %}
+</body>
