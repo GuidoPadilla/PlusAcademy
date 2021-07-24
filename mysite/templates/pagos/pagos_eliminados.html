@@ -144,7 +144,7 @@
 {% block content %}
 {% csrf_token %}
 <!-- <a href="http://127.0.0.1:8000/pagos/pagos_excel.xls" download>Descargar</a> -->
-<div class="container">
+<div class="container" style="width:90%">
     <div class="row justify-content-center">
         <div class="col">
             <label for="start_date">Fecha de inicio:</label>
@@ -152,7 +152,7 @@
         </div>
         <div  class="col">
             <label for="finish_date">Fecha final:</label>
-            <input type="date" placeholder="dd/mm/yyyy" id="finish_date"></input>
+            <input type="date" placeholder="dd-mm-yyyy" id="finish_date"></input>
         </div>
         <div  class="col">
             <label for="user_code">Codigo de Usuario:</label>
@@ -163,25 +163,31 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Fecha Pago</th>
-                <th>Codigo de Estudiante</th>
-                <th>Codigo De Curso</th>
-                <th>Tipo de pago</th>
-                <th>Tipo de Moneda</th>
+                <th>Pago Realizado Por</th>
+                <th>Codigo del Curso Pagado</th>
+                <th>Fecha Pago Registrado</th>
+                <th>Tipo de Pago</th>
+                <th>Solicitud de Eliminacion</th>
+                <th>Procesado de Eliminacion</th>
+                <th>Fecha Solicitud Eliminacion</th>
+                <th>Fecha Respuesta Eliminacion</th>
                 <th>Monto</th>
             </tr>
         </thead>
-        <tfoot>
+        <!-- <tfoot>
             <tr>
                 <th>ID</th>
-                <th>Fecha Pago</th>
-                <th>Codigo de Estudiante</th>
-                <th>Codigo De Curso</th>
-                <th>Tipo de pago</th>
-                <th>Tipo de Moneda</th>
+                <th>Pago Realizado Por</th>
+                <th>Codigo del Curso Pagado</th>
+                <th>Fecha Pago Registrado</th>
+                <th>Tipo de Pago</th>
+                <th>Solicitud de Eliminacion</th>
+                <th>Procesado de Eliminacion</th>
+                <th>Fecha Solicitud Eliminacion</th>
+                <th>Fecha Respuesta Eliminacion</th>
                 <th>Monto</th>
             </tr>
-        </tfoot>
+        </tfoot> -->
     </table>
 </div>
 <script type="text/javascript">
@@ -235,31 +241,34 @@
                 fixedHeader: true,
                 columns: [
                     { data: 'id' },
-                    { data: 'fecha_pago' },
-                    { data: 'user' },
-                    { data: 'codigo_curso' },
+                    { data: 'pago_user' },
+                    { data: 'pago_codigo_curso' },
+                    { data: 'fecha_pago_procesado' },
                     { data: 'tipo_pago' },
-                    { data: 'moneda' },
-                    { data: 'cantidad' },
+                    { data: 'solicitado_por' },
+                    { data: 'procesado_por' },
+                    { data: 'fecha_solicitud' },
+                    { data: 'fecha_respuesta' },
+                    { data: 'monto' },
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
                 rowGroup: {
-                    dataSrc: [ 'user', 'tipo_pago' ],
+                    dataSrc: [ 'pago_user', 'tipo_pago' ],
                     endRender: ( rows, group, index ) => {
                         let totalPago = rows
                         .data()
-                        .pluck('cantidad')
+                        .pluck('monto')
                         .reduce((a, b) => {
                             return a + b*1
                         }, 0)
                         return $('<tr/>')
-                        .append( `<td colspan="4" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Total:' : 'SubTotal:'}</td>` )
-                        .append( `<td colspan="2">${totalPago}</td>` )
+                        .append( `<td colspan="8" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Total' : 'Subtotal'}</td>` )
+                        .append( `<td colspan="1">${totalPago}</td>` )
 
                     },
                 },
                 columnDefs: [ 
-                    { targets: [2, 4], visible: false },
+                    { targets: [0], visible: false },
                     { searchable: false, targets: 5 }
                 ],
                 rowId: 'id'

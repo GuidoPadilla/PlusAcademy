@@ -87,6 +87,7 @@ def solicitud_eliminacion_pago(request):
             print(eliminacionPago)
             eliminacionPago.procesadoPor = request.user
             eliminacionPago.respuesta = 0
+            eliminacionPago.fechaRespuesta = datetime.now()
             eliminacionPago.save()
             response_data = {}
             response_data['result'] = 'CONFIRMADA SOLICITUD DE ELIMINACION DEL PAGO'
@@ -100,6 +101,7 @@ def solicitud_eliminacion_pago(request):
             eliminacionPago = eliminacionPago.first()
             eliminacionPago.procesadoPor = request.user
             eliminacionPago.respuesta = 1
+            eliminacionPago.fechaRespuesta = datetime.now()
             eliminacionPago.save()
             response_data = {}
             response_data['result'] = 'RECHAZADA SOLICITUD DE ELIMINACION DEL PAGO'
@@ -115,23 +117,26 @@ def pagos_eliminados(request):
 
 def pagos_eliminados_list(request):
     if request.is_ajax() and request.method == 'POST':
+
         action = request.POST.get('action')
         params = request.POST.get('params')
         if action == 'listaPagos':
-            pagos = Pago.objects.filter(status=0)
-            if params:
-                parametros = params.split(',')
-                f_ini = parametros[0]
-                f_fin = parametros[1]
-                cod_usuario = parametros[2]
-                if f_ini != '' and f_fin == '':
-                    pagos = pagos.filter(fecha_pago__gte=f_ini)
-                if f_fin != '' and f_ini == '':
-                    pagos = pagos.filter(fecha_pago__lte=f_fin)
-                if f_fin != '' and f_ini != '':
-                    pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
-                if cod_usuario != '':
-                    pagos = pagos.filter(user__username__contains=cod_usuario)
+            # pagos = Pago.objects.filter(status=0)
+            pagos = EliminacionPagos.objects.filter(respuesta=0)
+            # if params:
+            #     parametros = params.split(',')
+            #     f_ini = parametros[0]
+            #     f_fin = parametros[1]
+            #     cod_usuario = parametros[2]
+            #     if f_ini != '' and f_fin == '':
+            #         pagos = pagos.filter(fecha_pago__gte=f_ini)
+            #     if f_fin != '' and f_ini == '':
+            #         pagos = pagos.filter(fecha_pago__lte=f_fin)
+            #     if f_fin != '' and f_ini != '':
+            #         pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
+            #     if cod_usuario != '':
+            #         pagos = pagos.filter(user__username__contains=cod_usuario)
+            print({"data":[x.toDict() for x in pagos]})
             return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
     else:
         response_data = {}

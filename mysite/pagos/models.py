@@ -33,7 +33,7 @@ class Pago(models.Model):
     status = models.IntegerField(default = 1)
 
     def __str__(self):
-        return 'Pago ' + self.user.username
+        return 'Pago ' + self.user.username + ' Para Curso ' + self.codigo_curso.codigo + ' Tipo de Pago ' + self.tipo_pago.nombre + ' Cantidad Q' + str(self.cantidad) + ' Fecha ' + str(self.fecha_pago)
     def toDict (self):
         return {'fecha_pago': self.fecha_pago.strftime('%d/%m/%Y'), 'user': self.user.username, 'id': self.id, 'cantidad': self.cantidad, 'codigo_curso': self.codigo_curso.codigo, 'moneda': self.moneda.nombre, 'tipo_pago': self.tipo_pago.nombre}
     
@@ -42,4 +42,8 @@ class EliminacionPagos(models.Model):
     solicitadoPor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     procesadoPor = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True, related_name='+')
     respuesta = models.IntegerField(default=None, null=True)
-    fecha = models.DateTimeField(auto_now_add=True)
+    fechaSolicitud = models.DateTimeField(auto_now_add=True)
+    fechaRespuesta = models.DateTimeField(null=True, default=None)
+
+    def toDict(self):
+        return {'id': self.id, 'pago_user': self.pago.user.username, 'pago_codigo_curso': self.pago.codigo_curso.codigo, 'fecha_pago_procesado': self.pago.fecha_pago.strftime('%d/%m/%Y'), 'tipo_pago': self.pago.tipo_pago.nombre, 'monto': self.pago.cantidad, 'solicitado_por': self.solicitadoPor.username, 'procesado_por': self.procesadoPor.username, 'fecha_solicitud': self.fechaSolicitud.strftime('%d/%m/%Y'), 'fecha_respuesta': self.fechaRespuesta.strftime('%d/%m/%Y')}
