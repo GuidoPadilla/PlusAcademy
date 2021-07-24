@@ -248,3 +248,6 @@ def ingreso_view(request):
         return render(request, 'pagos/ingresar.html', context)
     else:
         return render(request, 'pagos/ingresar.html')
+
+def cobros_extra_view(request):
+    return render(request, 'pagos/cobros_extra.html')
