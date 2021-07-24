@@ -179,10 +179,10 @@ def saldos(request):
             cursosLlevados = LlevaCurso.objects.all()
             pagos = Pago.objects.all()
             hoy = date.today()
+            lista = []
             for cursoLlevado in cursosLlevados:
-                lista = []
                 pagos_usuario = pagos.filter(user__username=cursoLlevado.user.username)
-                pagos_usuario = pagos_usuario.filter(codigo_curso__codigo=cursoLlevado.curso.codigo)
+                pagos_usuario = pagos_usuario.filter(codigo_curso__codigo=cursoLlevado.curso.codigo).filter(status=1)
                 total_inscripcion = pagos_usuario.filter(tipo_pago__nombre='Inscripcion').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
                 pagos_inscripcion = cursoLlevado.curso.inscripcion- total_inscripcion
                 if pagos_inscripcion != 0:
@@ -208,6 +208,7 @@ def saldos(request):
                     fecha_cuota = hoy
                     for i in range(int(faltan)):
                         fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=llevados+i+1)
+                        
                         if  hoy > fecha_cuota:
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
                             , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
