@@ -45,7 +45,6 @@ def view_createuser(request):
         if request.method == "POST":
             form1 = UserRegisterForm(request.POST)
             form2 = UserExtraRegisterForm(request.POST)
-            form3 = LlevaCursoRegisterForm(request.POST)
             """ now = datetime.datetime.now()
             currYear = '{:02d}'.format(now.year)
             currYear = currYear[2:4]
@@ -67,18 +66,15 @@ def view_createuser(request):
             codigo = lastname+currYear+resultado """
             if form1.is_valid():
                 if form2.is_valid():
-                    if form3.is_valid():
-                        """ form1.cleaned_data['username'] = codigo """
-                        new_user = User.objects.create_user(**form1.cleaned_data)
-                        UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                        LlevaCurso.objects.create(user=new_user, **form3.cleaned_data)
-                        return HttpResponseRedirect('../control/')
+                    """ form1.cleaned_data['username'] = codigo """
+                    new_user = User.objects.create_user(**form1.cleaned_data)
+                    UserExtra.objects.create(user=new_user, **form2.cleaned_data)
+                    return HttpResponseRedirect('../control/')
 
         else:
             form1 = UserRegisterForm()
             form2 = UserExtraRegisterForm()
-            form3 = LlevaCursoRegisterForm()
-        context = {'form1': form1, 'form2': form2, 'form3': form3}
+        context = {'form1': form1, 'form2': form2}
         return render(request, 'usuarios/create_user.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
@@ -94,6 +90,20 @@ def view_creatcurso(request):
             form1 = CursoRegisterForm()
         context = {'form1': form1}
         return render(request, 'usuarios/create_curso.html', context)
+    else:
+        return HttpResponseRedirect('../usuarios/login/')
+
+def view_createasignacion(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form1 = LlevaCursoRegisterForm(request.POST)
+            if form1.is_valid():
+                LlevaCurso.objects.create(**form1.cleaned_data)
+                return HttpResponseRedirect('../asignar_curso/')
+        else:
+            form1 = LlevaCursoRegisterForm()
+        context = {'form1': form1}
+        return render(request, 'usuarios/asignar_curso.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
