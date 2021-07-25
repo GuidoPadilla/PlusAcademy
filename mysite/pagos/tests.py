@@ -1,7 +1,9 @@
 
-from django.test import TestCase,SimpleTestCase
+from django.test import TestCase,SimpleTestCase,Client
 from django.urls import reverse, resolve
 from pagos.views import control_view, saldo_view, ingreso_view, pagos, saldos, control_pagos, solicitarEliminacionPago, pagos_solicitados_eliminar_view, pagos_pendientes, solicitud_eliminacion_pago, pagos_eliminados, pagos_eliminados_list
+from pagos.models import TipoPago, Moneda, Pago, EliminacionPagos
+import json
 
 class TestUrls(SimpleTestCase):
 
@@ -65,3 +67,69 @@ class TestUrls(SimpleTestCase):
 		print(resolve(url))
 		self.assertEquals(resolve(url).func,pagos_eliminados_list)
 			
+
+class TestViews(TestCase):
+
+        def test_control_view(self):
+                client = Client()
+                response = client.get('/pagos/control/')
+                self.assertTemplateUsed(response, 'pagos/control.html')
+
+        def test_saldo_view(self):
+                client = Client()
+                response = client.get('/pagos/saldo_consulta/')
+                self.assertTemplateUsed(response, 'pagos/saldo_consulta.html')
+
+        def test_pagos(self):
+                #Incomplete
+                client = Client()
+                response = client.get('/pagos/lista_pagos/')
+
+
+        def test_solicitarEliminacionPago(self):
+               #Incomplete
+                x=0
+
+        def test_pagos_solicitados_eliminar_view(self):
+                client = Client()
+                response = client.get('/pagos/pagos_solicitados_eliminar/')
+                self.assertTemplateUsed(response, 'pagos/pagos_solicitados_eliminar.html')
+        
+        def test_solicitud_eliminacion_pago(self):
+                #Incomplete
+                x=0
+
+        def test_pagos_eliminados(self):
+                client = Client()
+                response = client.get('/pagos/pagos_eliminados/')
+                self.assertTemplateUsed(response, 'pagos/pagos_eliminados.html')
+
+        def test_pagos_eliminados_list(self):
+                #Incomplete
+                x=0
+
+        def test_pagos_pendientes(self):
+                #Incomplete
+                x=0
+
+        def test_saldos(self):
+                #Incomplete
+                client = Client()
+                response = client.get('/pagos/lista_saldos/')
+
+        def test_control_pagos(self):
+                #template fail
+                client = Client()
+                response = client.get('/pagos/pagos_excel.xls/')
+                #self.assertTemplateUsed(response, 'pagos/control_excel.html')
+
+        def test_ingreso_view(self):
+                #Template fail
+                client = Client()
+                response = client.get('/pagos/pagos_ingreso/')
+                #self.assertTemplateUsed(response, 'pagos/ingresar.html')
+
+        def test_cobros_extra_view(self):
+                client = Client()
+                response = client.get('/pagos/cobros_extra/')
+                self.assertTemplateUsed(response, 'pagos/cobros_extra.html')
