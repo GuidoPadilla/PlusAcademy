@@ -16,5 +16,5 @@ urlpatterns = [
     path('solicitud_eliminacion_pago/', views.solicitud_eliminacion_pago, name='solicitud_eliminacion_pago'),
     path('pagos_eliminados/', views.pagos_eliminados, name='pagos_eliminados'),
     path('pagos_eliminados_list/', views.pagos_eliminados_list, name='pagos_eliminados_list'),
-    path('cobros_extra/', views.cobros_extra_view, name='cobros_extra'),
+    
 ]

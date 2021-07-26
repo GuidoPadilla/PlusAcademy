@@ -1,3 +1,4 @@
+from django.db.models import fields
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
@@ -29,3 +30,11 @@ class CursoRegisterForm(ModelForm):
     class Meta:
         model = Curso
         fields = ['codigo', 'nombre', 'inscripcion', 'cuota', 'otros', 'duracion']
+
+
+class CobroExtraForm(forms.Form):
+    codigo_curso = forms.fields.CharField(label='Código de Curso', max_length=100)
+    monto = forms.fields.DecimalField(label='Monto', decimal_places=2, max_digits= 6)
+    fecha_limite = forms.fields.DateField(label='Fecha Límite')
+#    class Meta:
+#        fields = ['codigo de curso', 'monto', 'fecha limite']
