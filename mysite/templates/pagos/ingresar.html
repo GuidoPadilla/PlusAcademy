@@ -5,16 +5,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Ingresar Pago</h1>
-<hr>
 
-<form action="" method="post">
-		<div class="form-container">
-			{% csrf_token %}
-			{{form}}
+<div class="container">
+	<form action="" method="post">
+		<h4 class="form-title">Ingresar Pago</h4>
+				{% csrf_token %}
+				{{form}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Ingresar Pago">
 		</div>
-	<div class="btn-container">
-		<input class="btn btn-buscar" type="submit" value="Ingresar Pago">
-	</div>
-</form>
+	</form>
+</div>
 {% endblock content %}

@@ -5,16 +5,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Crear Curso</h1>
-<hr>
+<!-- <h1>Crear Curso</h1>
+<hr> -->
 
-<form action="" method="post">
-		<div class="form-container">
-			{% csrf_token %}
-			{{form1}}
+<div class="container">
+	<form action="" method="post">
+		<h4 class="form-title">Crear Curso</h4>
+				{% csrf_token %}
+				{{form1}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Crear Curso">
 		</div>
-	<div class="btn-container">
-		<input class="btn btn-buscar" type="submit" value="Crear Curso">
-	</div>
-</form>
+	</form>
+</div>
 {% endblock content %}

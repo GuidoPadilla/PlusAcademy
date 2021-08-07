@@ -6,19 +6,17 @@
 
 {% block content %}
 
-<img src="imagotipo.jpg">
-<center><h1>Login</h1></center>
-<hr>
 
-<body background="#53BDD4"> 
-<form action="" method="post">
-		<div class="form-container">
-			{% csrf_token %}
-			{{form}}
+
+<div class="container">
+	<img src="../../static/img/plusacademy/imagotipo.jpg">
+	<form action="" method="post">
+		<h4 class="form-title">Iniciar Sesión</h4>
+				{% csrf_token %}
+				{{form}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Login">
 		</div>
-	<div class="btn-container">
-		<input class="btn btn-buscar" type="submit" value="Login">
-	</div>
-</form>
+	</form>
+</div>
 {% endblock content %}
-</body>

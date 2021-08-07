@@ -1,7 +1,6 @@
 h1 { color: #000; font-size: 24px; font-weight: 800; line-height: 40px; text-transform: uppercase; }
 
 
-
 * {
   font-family: 'Greycliff cf Heavy', sans-serif;
 }
@@ -21,7 +20,7 @@ ul {
 }
 
 .btn {
-  background-color: #333; /* Green */
+  background-color: #000; /* Green */
   border: none;
   color: white;
   padding: 10px 20px;
@@ -32,62 +31,69 @@ ul {
   cursor: pointer;
 }
 
-.form-container {
-  margin: 40px 0;
+.container {
+  margin-top: 15px;
+  width:20%;
+  height: auto;
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
-  background-color: #53BDD4;
-  /* flex-direction: row; /* change this to row instead of 'column' */
-  /* flex-wrap:wrap; /* added flex-wrap */
-  justify-content:space-evenly;
+  background-color: #fff;
+  border-radius: 20px;
+  border: 2px solid black;
+  flex-direction: column;
 }
 
-.form-container label{
-  font-weight: 700;
-  background-color: #53BDD4
+.form-title {
+  text-align: center;
+  font-size: 20px;
+  margin:15px 0;
+}
+
+input[type=text], input[type=email], input[type=number], input[type=password], select {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 5px 0;
+  display: inline-block;
+  border: 1px solid black;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=text]:focus, input[type=email]:focus, input[type=number]:focus, input[type=password]:focus, select:focus {
+  outline: none;
+  border-width: 2px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+.helptext {
+  display: none;
 }
 
 .btn-container {
+  margin-top: 10px;
   display: flex;
   justify-content: center;
-  margin-bottom: 15px;
+  
 }
 
-.songs-container {
-  height: 300px;
-  width: 100%;
-  overflow: auto;
-  background-color: #53BDD4;
-  border:1px solid #000;
-}
-
-.iframe-container{
-  display: flex;
-  justify-content: center;
-  margin-top:20px;
-  background-color: #53BDD4;
-}
-
-.reporte-a {
-  text-decoration: none;
-  display: block;
-  color:white;
-  background-color:#333;
-  width:55%;
-  text-align: center;
-  margin:20px 0;
-  padding:20px 15px;
-
-}
-
-.reporte-a:hover {
-  background-color:#53BDD4;
-}
 
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
-  background-color: #53BDD4;
+  /* background-color: #53BDD4; */
 }
 
 td, th {

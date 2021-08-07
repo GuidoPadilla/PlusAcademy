@@ -5,16 +5,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Asignar curso a usuario</h1>
-<hr>
 
-<form action="" method="post">
-		<div class="form-container">
-			{% csrf_token %}
-			{{form1}}
+<div class="container">
+	<form action="" method="post">
+		<h4 class="form-title">Asignar Curso</h4>
+				{% csrf_token %}
+				{{form1}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Realizar asignacion">
 		</div>
-	<div class="btn-container">
-		<input class="btn btn-buscar" type="submit" value="Realizar asignacion">
-	</div>
-</form>
+	</form>
+</div>
 {% endblock content %}

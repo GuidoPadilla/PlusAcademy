@@ -9,7 +9,7 @@
 }
 
 .navbar-item {
-  float: left;
+  float: right;
 }
 
 .navbar-item .navbar-a {
@@ -25,10 +25,6 @@
 /* Change the link color to #111 (black) on hover */
 .navbar-item .navbar-a:hover {
   background-color: #111;
-}
-
-body {
-  background-color: #53BDD4;
 }
 
 .dropbtn {

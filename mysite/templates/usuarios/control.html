@@ -12,7 +12,7 @@
 
 {% block content %}
 {% csrf_token %}
-<table id="table_user" class="table table-dark table-hover" style="width:100%">
+<table id="table_user" class="table table-light table-hover" style="width:100%">
     <thead>
         <tr>
             <th>Codigo</th>
@@ -26,7 +26,7 @@
             <th>Edad</th>
         </tr>
     </thead>
-    <tfoot>
+    <!-- <tfoot>
         <tr>
             <th>Codigo</th>
             <th>Nombres</th>
@@ -38,7 +38,7 @@
             <th>Rol</th>
             <th>Edad</th>
         </tr>
-    </tfoot>
+    </tfoot> -->
 </table>
 <script type="text/javascript">
     $(document).ready(() => {
