@@ -7,42 +7,110 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    
     {% endblock scripts %}
 </head>
 
 {% block content %}
 {% csrf_token %}
-<table id="table_user" class="table table-light table-hover" style="width:100%">
-    <thead>
-        <tr>
-            <th>Codigo</th>
-            <th>Nombres</th>
-            <th>Correo Electronico</th>
-            <th>DPI</th>
-            <th>Telefono</th>
-            <th>Direccion</th>
-            <th>Sexo</th>
-            <th>Rol</th>
-            <th>Edad</th>
-        </tr>
-    </thead>
-    <!-- <tfoot>
-        <tr>
-            <th>Codigo</th>
-            <th>Nombres</th>
-            <th>Correo Electronico</th>
-            <th>DPI</th>
-            <th>Telefono</th>
-            <th>Direccion</th>
-            <th>Sexo</th>
-            <th>Rol</th>
-            <th>Edad</th>
-        </tr>
-    </tfoot> -->
-</table>
+<div style="margin-top: 20px;">
+    <div class="row justify-content-center">
+        <div class="col">
+            <label for="dt1">Fecha de ingreso inicial:</label>
+            <input type="search" id="dt1"></input>
+        </div>
+        <div  class="col">
+            <label for="dt2">Fecha de ingreso final:</label>
+            <input type="search" id="dt2"></input>
+        </div>
+        <div  class="col">
+            <label for="user_code">Codigo de Usuario:</label>
+            <input type="search" id="user_code">
+        </div>
+        <div  class="col">
+            <label for="user_name">Nombre de Usuario:</label>
+            <input type="search" id="user_name">
+        </div>
+    </div>
+    <table id="table_user" class="table table-light table-hover" style="width:100%">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Correo Electronico</th>
+                <th>DPI</th>
+                <th>Telefono</th>
+                <th>Direccion</th>
+                <th>Sexo</th>
+                <th>Rol</th>
+                <th>Edad</th>
+                <th>Fecha de Ingreso</th>
+            </tr>
+        </thead>
+    </table>
+</div>
 <script type="text/javascript">
+
+
+    // FILTRO DE RANGO DE FECHAS - SE LLAMA CADA VEZ QUE UNO DE LOS DOS DATEPICKERS CAMBIE
+    minDateFilter = "";
+    maxDateFilter = "";
+
+    $.fn.dataTableExt.afnFiltering.push(
+        (settings, data, dataIndex) => {
+            let mydate
+            if (typeof data._date == 'undefined') {
+
+                var parts = data[9].split('/')
+                mydate = new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+
+            if (minDateFilter && !isNaN(minDateFilter)) {
+                if (mydate < minDateFilter) {
+                    return false;
+                }
+            }
+
+            if (maxDateFilter && !isNaN(maxDateFilter)) {
+                if (mydate > maxDateFilter) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    )
+
+    // FILTRO DE CODIGO DE USUARIO - SE LLAMA CADA VEZ QUE CAMBIE EL INPUT
+    $.fn.dataTable.ext.search.push(
+        ( settings, data, dataIndex ) => {
+            const code = $('#user_code').val()
+            const codeColumn = data[0]
+            if ( codeColumn.includes(code) || code === '')
+            {
+                return true
+            }
+            return false
+        }
+    )
+
+        // FILTRO DE CODIGO DE USUARIO - SE LLAMA CADA VEZ QUE CAMBIE EL INPUT
+        $.fn.dataTable.ext.search.push(
+        ( settings, data, dataIndex ) => {
+            const name = $('#user_name').val()
+            const nameColumn = data[1]
+            if ( nameColumn.includes(name) || name === '')
+            {
+                return true
+            }
+            return false
+        }
+    )
+
     $(document).ready(() => {
-        $('#table_user').DataTable({
+        let table = $('#table_user').DataTable({
             ajax: {
                     url: '/usuarios/usuarios/',
                     type: 'POST',
@@ -51,8 +119,9 @@
                         content: 'xxx',
                         csrfmiddlewaretoken: '{{ csrf_token }}',
                     },
-                    dataSrc: 'data'
+                    dataSrc: 'data',
                 },
+                "sDom":"ltipr",
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
                 },
@@ -65,11 +134,72 @@
                     { data: 'direccion' },
                     { data: 'sexo' },
                     { data: 'rol' },
-                    { data: 'edad' }
+                    { data: 'edad' },
+                    { data: 'date_joined' },
                 ],
                 rowId: 'codigo',
         })
+            // FORMATO DE DATEPICKER 1
+
+        $("#dt1").datepicker({
+            dateFormat: "dd/mm/yy",
+            // minDate: 0,
+            onSelect: function (date) {
+                var dt2 = $('#dt2');
+                var startDate = $(this).datepicker('getDate');
+                //add 30 days to selected date
+                startDate.setDate(startDate.getDate() + 30);
+                var minDate = $(this).datepicker('getDate');
+                var dt2Date = dt2.datepicker('getDate');
+                //difference in days. 86400 seconds in day, 1000 ms in second
+                var dateDiff = (dt2Date - minDate)/(86400 * 1000);
+
+                //dt2 not set or dt1 date is greater than dt2 date
+                if (dt2Date == null || dateDiff < 0) {
+                        dt2.datepicker('setDate', minDate);
+                }
+                //dt1 date is 30 days under dt2 date
+                else if (dateDiff > 30){
+                        dt2.datepicker('setDate', startDate);
+                }
+                //sets dt2 maxDate to the last day of 30 days window
+                // dt2.datepicker('option', 'maxDate', startDate);
+                dt2.datepicker('option', 'minDate', minDate);
+
+                minDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            minDateFilter = $(this).datepicker('getDate');
+            table.draw();
+        });
+
+        // FORMATO DE DATEPICKER 2
         
+        $('#dt2').datepicker({
+            dateFormat: "dd/mm/yy",
+            onSelect: function(date){
+                maxDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            maxDateFilter = $(this).datepicker('getDate');
+            table.draw();
+        });
+
+
+        // FUNCIONES QUE REPINTAN LA TABLA CADA VEZ QUE LOS FILTROS CAMBIAN
+
+        $('#dt1, #dt2').change( () => {
+            table.draw();
+        })
+        $('#user_code').keyup( () => {
+            table.draw();
+        })
+        $('#user_name').keyup( () => {
+            table.draw();
+        })
+
     })
 </script>
 {% endblock content %}

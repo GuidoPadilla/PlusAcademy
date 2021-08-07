@@ -7,4 +7,4 @@ class PaymentRegisterForm(ModelForm):
 
     class Meta:
         model = Pago
-        fields = ['cantidad', 'codigo_curso', 'moneda', 'tipo_pago', 'user']
+        fields = ['codigo_curso',  'user', 'tipo_pago', 'forma_pago', 'moneda', 'cantidad']

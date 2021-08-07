@@ -163,101 +163,129 @@
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script> -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     {% endblock scripts %}
 </head>
 
 {% block content %}
 {% csrf_token %}
-<!-- <a href="http://127.0.0.1:8000/pagos/pagos_excel.xls" download>Descargar</a> -->
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col">
-            <label for="start_date">Fecha de inicio:</label>
-            <input type="date" placeholder="dd/mm/yyyy" id="start_date"></input>
+<div style="margin-top: 20px;"></div>
+    <!-- <a href="http://127.0.0.1:8000/pagos/pagos_excel.xls" download>Descargar</a> -->
+    <div style="width:90%" class="container">
+        <div class="row justify-content-center">
+            <div class="col">
+                <label for="dt1">Fecha de inicio:</label>
+                <input type="text" id="dt1"></input>
+            </div>
+            <div  class="col">
+                <label for="dt2">Fecha final:</label>
+                <input type="text" id="dt2"></input>
+            </div>
+            <div  class="col">
+                <label for="user_code">Codigo de Usuario:</label>
+                <input type="text" id="user_code">
+            </div>
         </div>
-        <div  class="col">
-            <label for="finish_date">Fecha final:</label>
-            <input type="date" placeholder="dd/mm/yyyy" id="finish_date"></input>
-        </div>
-        <div  class="col">
-            <label for="user_code">Codigo de Usuario:</label>
-            <input type="search" id="user_code">
-        </div>
-    </div>
-    <table id="data_table" class="table table-striped table-bordered table-hover" style="width:100%;">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Fecha Pago</th>
-                <th>Codigo de Estudiante</th>
-                <th>Codigo De Curso</th>
-                <th>Tipo de pago</th>
-                <th>Tipo de Moneda</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>ID</th>
-                <th>Fecha Pago</th>
-                <th>Codigo de Estudiante</th>
-                <th>Codigo De Curso</th>
-                <th>Tipo de pago</th>
-                <th>Tipo de Moneda</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-            </tr>
-        </tfoot>
-    </table>
-    <!-- Modal HTML -->
-    <div id="modalConfirmation" class="modal fade">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header2 justify-content-center">
-                    <div class="icon-box">
-                        <i class="fa fa-check"></i>
+        <table id="data_table" class="table table-striped table-bordered table-hover" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha Pago</th>
+                    <th>Codigo de Estudiante</th>
+                    <th>Codigo De Curso</th>
+                    <th>Tipo de Pago</th>
+                    <th>Forma de Pago</th>
+                    <th>Tipo de Moneda</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+        </table>
+        <!-- Modal HTML -->
+        <div id="modalConfirmation" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header2 justify-content-center">
+                        <div class="icon-box">
+                            <i class="fa fa-check"></i>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body text-center">
-                    <h4>Confirmado!</h4>	
-                    <p>Has confirmado eliminacion del pago</p>
-                    <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
+                    <div class="modal-body text-center">
+                        <h4>Confirmado!</h4>	
+                        <p>Has confirmado eliminacion del pago</p>
+                        <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="modalRejection" class="modal fade">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header1 justify-content-center">
-                    <div class="icon-box">
-                        <i class="fa fa-times"></i>
+        <div id="modalRejection" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header1 justify-content-center">
+                        <div class="icon-box">
+                            <i class="fa fa-times"></i>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body text-center">
-                    <h4>Rechazado!</h4>	
-                    <p>Has rechazado la eliminacion del pago</p>
-                    <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
+                    <div class="modal-body text-center">
+                        <h4>Rechazado!</h4>	
+                        <p>Has rechazado la eliminacion del pago</p>
+                        <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+
+    // FILTRO DE RANGO DE FECHAS - SE LLAMA CADA VEZ QUE UNO DE LOS DOS DATEPICKERS CAMBIE
+    minDateFilter = "";
+    maxDateFilter = "";
+
+    $.fn.dataTableExt.afnFiltering.push(
+        (settings, data, dataIndex) => {
+
+            let mydate
+            if (typeof data._date == 'undefined') {
+
+                var parts = data[1].split('/')
+                mydate = new Date(parts[2], parts[1] - 1, parts[0]); 
+            }
+
+            if (minDateFilter && !isNaN(minDateFilter)) {
+                if (mydate < minDateFilter) {
+                    return false;
+                }
+            }
+
+            if (maxDateFilter && !isNaN(maxDateFilter)) {
+                if (mydate > maxDateFilter) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    )
+
+
+    // FILTRO DE CODIGO DE USUARIO - SE LLAMA CADA VEZ QUE CAMBIE EL INPUT
     $.fn.dataTable.ext.search.push(
         ( settings, data, dataIndex ) => {
             const code = $('#user_code').val()
             const codeColumn = data[2]
-            if ( code == codeColumn || code === '')
+            if ( codeColumn.includes(code) || code === '')
             {
                 return true
             }
             return false
         }
     )
+
     $(document).ready(() => {
         let table = $('#data_table').DataTable({
             ajax: {
@@ -275,6 +303,7 @@
                 buttons: ['csv', 'excel', 'pdf'], */
                 scrollY: '70vh',
                 scrollCollapse: true,
+                "sDom":"ltipr",
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
                 },
@@ -286,6 +315,7 @@
                     { data: 'user' },
                     { data: 'codigo_curso' },
                     { data: 'tipo_pago' },
+                    { data: 'forma_pago' },
                     { data: 'moneda' },
                     { data: 'cantidad' },
                     {
@@ -305,8 +335,8 @@
                             return a + b*1
                         }, 0)
                         return $('<tr/>')
-                        .append( `<td colspan="4" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Total:' : 'SubTotal:'}</td>` )
-                        .append( `<td colspan="2">${totalPago}</td>` )
+                        .append( `<td colspan="5" class=${index%2===0 ? "tot" : "sub"}><strong>${index%2===0 ?  'Total:' : 'SubTotal:'}</strong></td>` )
+                        .append( `<td colspan="2"><strong>Q${totalPago}</strong></td>` )
 
                     },
                 },
@@ -316,16 +346,67 @@
                 ],
                 rowId: 'id'
         })
-        /* $('#start_date, #finish_date').focusout( () => {
+
+        // FORMATO DE DATEPICKER 1
+
+        $("#dt1").datepicker({
+            dateFormat: "dd/mm/yy",
+            // minDate: 0,
+            onSelect: function (date) {
+                var dt2 = $('#dt2');
+                var startDate = $(this).datepicker('getDate');
+                //add 30 days to selected date
+                startDate.setDate(startDate.getDate() + 30);
+                var minDate = $(this).datepicker('getDate');
+                var dt2Date = dt2.datepicker('getDate');
+                //difference in days. 86400 seconds in day, 1000 ms in second
+                var dateDiff = (dt2Date - minDate)/(86400 * 1000);
+
+                //dt2 not set or dt1 date is greater than dt2 date
+                if (dt2Date == null || dateDiff < 0) {
+                        dt2.datepicker('setDate', minDate);
+                }
+                //dt1 date is 30 days under dt2 date
+                else if (dateDiff > 30){
+                        dt2.datepicker('setDate', startDate);
+                }
+                //sets dt2 maxDate to the last day of 30 days window
+                // dt2.datepicker('option', 'maxDate', startDate);
+                dt2.datepicker('option', 'minDate', minDate);
+
+                minDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            minDateFilter = $(this).datepicker('getDate');
             table.draw();
-        }) */
+        });
+
+        // FORMATO DE DATEPICKER 2
+        
+        $('#dt2').datepicker({
+            dateFormat: "dd/mm/yy",
+            onSelect: function(date){
+                maxDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            maxDateFilter = $(this).datepicker('getDate');
+            table.draw();
+        });
+
+
+        // FUNCIONES QUE REPINTAN LA TABLA CADA VEZ QUE LOS FILTROS CAMBIAN
+
+        $('#dt1, #dt2').change( () => {
+            table.draw();
+        })
         $('#user_code').keyup( () => {
             table.draw();
         })
 
         $('#data_table').on('click', '#btn1', function() {
             var data = table.row( $(this).parents('tr') ).data();
-            console.log(data)
             var dataSent = {
                 'pago_id': data.id
             }

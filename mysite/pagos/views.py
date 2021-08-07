@@ -26,10 +26,12 @@ def pagos(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
         params = request.POST.get('params')
+        print(params)
         if action == 'listaPagos':
             pagos = Pago.objects.filter(status=1)
             if params:
                 parametros = params.split(',')
+                # print(parametros)
                 f_ini = parametros[0]
                 f_fin = parametros[1]
                 cod_usuario = parametros[2]
@@ -123,19 +125,6 @@ def pagos_eliminados_list(request):
         if action == 'listaPagos':
             # pagos = Pago.objects.filter(status=0)
             pagos = EliminacionPagos.objects.filter(respuesta=0)
-            # if params:
-            #     parametros = params.split(',')
-            #     f_ini = parametros[0]
-            #     f_fin = parametros[1]
-            #     cod_usuario = parametros[2]
-            #     if f_ini != '' and f_fin == '':
-            #         pagos = pagos.filter(fecha_pago__gte=f_ini)
-            #     if f_fin != '' and f_ini == '':
-            #         pagos = pagos.filter(fecha_pago__lte=f_fin)
-            #     if f_fin != '' and f_ini != '':
-            #         pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
-            #     if cod_usuario != '':
-            #         pagos = pagos.filter(user__username__contains=cod_usuario)
             print({"data":[x.toDict() for x in pagos]})
             return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
     else:
@@ -189,15 +178,15 @@ def saldos(request):
                     fecha_inscripcion = cursoLlevado.fecha_llevado + relativedelta(months=1)
                     if  hoy > fecha_inscripcion:
                         lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                        , 'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
                         , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
                         lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
                         ,'cantidad': cursoLlevado.curso.inscripcion
                         , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
                     else: 
                         lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion, 'tipo_pago': 'Por Vencer'
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
                         ,'cantidad': cursoLlevado.curso.inscripcion
                         , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
                 total_cuota = pagos_usuario.filter(tipo_pago__nombre='Cuota').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
@@ -211,15 +200,15 @@ def saldos(request):
                         
                         if  hoy > fecha_cuota:
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                            , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
                             , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
                             ,'cantidad': cursoLlevado.curso.cuota
                             , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
                         else: 
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota, 'tipo_pago': 'Por Vencer'
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
                             ,'cantidad': cursoLlevado.curso.cuota
                             , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
             return JsonResponse({"data":lista}, safe=False)
