@@ -26,7 +26,7 @@ SECRET_KEY = '!19v)3%u!1o5hszj8r_tj*tvq+l_9yjr-w3omddg#24135wauj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['https://plus-academy.herokuapp.com/','127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.templatetags.static',
+    'django.contrib.staticfiles',
     'usuarios',
     'pagos',
 ]
