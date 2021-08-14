@@ -1,111 +1,254 @@
+from datetime import datetime
+from datetime import date
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Curso, UserExtra, LlevaCurso
-from django.db import connection
+from .models import Pago, EliminacionPagos
+from usuarios.models import LlevaCurso
+from dateutil.relativedelta import relativedelta
+from django.db.models import Sum
+from .forms import PaymentRegisterForm
 from django.core.serializers import serialize
-import datetime
+import json
 
-def view_login(request):
-    if request.user.is_authenticated != True:
-        if request.method == "POST":
-            form = AuthenticationAddForm(request.POST)
+# Create your views here.
+def control_view(request):
+    return render(request, 'pagos/control.html')
 
-            if form.is_valid():
-                username = request.POST['username']
-                password = request.POST['password']
-                user = authenticate(username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return HttpResponseRedirect('../../pagos/control/')
-        else:
-            form = AuthenticationAddForm()
-        context = {'form': form}
-        return render(request, 'usuarios/login.html', context)
-    else:
-        return HttpResponseRedirect('../../pagos/control/')
+def saldo_view(request):
+    return render(request, 'pagos/saldo_consulta.html')
 
-def logout_user(request):
-    logout(request)
-    return HttpResponseRedirect('../../usuarios/login/')
-
-def lista_usuarios(request):
+def pagos(request):
     if request.is_ajax() and request.method == 'POST':
-        users = UserExtra.objects.all()
-        #users = users.filter(userextra__rol__nombre='estudiante')
-        return JsonResponse({"data":[x.toDict() for x in users]}, safe=False) 
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        print(params)
+        if action == 'listaPagos':
+            pagos = Pago.objects.filter(status=1)
+            if params:
+                parametros = params.split(',')
+                # print(parametros)
+                f_ini = parametros[0]
+                f_fin = parametros[1]
+                cod_usuario = parametros[2]
+                if f_ini != '' and f_fin == '':
+                    pagos = pagos.filter(fecha_pago__gte=f_ini)
+                if f_fin != '' and f_ini == '':
+                    pagos = pagos.filter(fecha_pago__lte=f_fin)
+                if f_fin != '' and f_ini != '':
+                    pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
+                if cod_usuario != '':
+                    pagos = pagos.filter(user__username__contains=cod_usuario)
+            return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+        else:
+            response_data = {}
+            response_data['result'] = 'ERROR'
+            response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+            return HttpResponse(serialize('json', response_data), content_type='application/json')
 
-def view_createuser(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form1 = UserRegisterForm(request.POST)
-            form2 = UserExtraRegisterForm(request.POST)
-            """ now = datetime.datetime.now()
-            currYear = '{:02d}'.format(now.year)
-            currYear = currYear[2:4]
-            lastname = request.POST['last_name']
-            lastname = lastname[0:3].lower()
+def solicitarEliminacionPago(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        id_pago = json.loads(request.POST.get('pagos_data')).get('pago_id')
+        if action == 'pagoEliminacion':
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 2
+            pago.save()
+            pagosExistentes = EliminacionPagos.objects.filter(pago=id_pago)
+            if not pagosExistentes:
+                EliminacionPagos.objects.create(pago=pago, solicitadoPor=request.user, respuesta=None)
+            else:
+                pagosExistentes.delete()
+                EliminacionPagos.objects.create(pago=pago, solicitadoPor=request.user, respuesta=None)
+            response_data = {}
+            response_data['result'] = 'CONFIRMADO'
+            return JsonResponse(response_data)
+
+def pagos_solicitados_eliminar_view(request):
+    return render(request, 'pagos/pagos_solicitados_eliminar.html')
+
+def solicitud_eliminacion_pago(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        id_pago = json.loads(request.POST.get('pagos_data')).get('pago_id')
+        if action == 'aceptarSolicitudEliminacionPago':
+            # pago = Pago.objects.filter(id=id_pago)
+            # pago.update(status=0)
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 0
+            pago.save()
+            eliminacionPago = EliminacionPagos.objects.filter(pago=id_pago)
+
+            eliminacionPago = eliminacionPago.first()
+            print(eliminacionPago)
+            eliminacionPago.procesadoPor = request.user
+            eliminacionPago.respuesta = 0
+            eliminacionPago.fechaRespuesta = datetime.now()
+            eliminacionPago.save()
+            response_data = {}
+            response_data['result'] = 'CONFIRMADA SOLICITUD DE ELIMINACION DEL PAGO'
+            return JsonResponse(response_data)
+        elif action == 'rechazarSolicitudEliminacionPago':
+            pago = Pago.objects.filter(id=id_pago)
+            pago = pago.first()
+            pago.status = 1
+            pago.save()
+            eliminacionPago = EliminacionPagos.objects.filter(pago=id_pago)
+            eliminacionPago = eliminacionPago.first()
+            eliminacionPago.procesadoPor = request.user
+            eliminacionPago.respuesta = 1
+            eliminacionPago.fechaRespuesta = datetime.now()
+            eliminacionPago.save()
+            response_data = {}
+            response_data['result'] = 'RECHAZADA SOLICITUD DE ELIMINACION DEL PAGO'
+            return JsonResponse(response_data)
+    else:
+        response_data = {}
+        response_data['result'] = 'ERROR'
+        response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+        return HttpResponse(serialize('json', response_data), content_type='application/json')  
+
+def pagos_eliminados(request):
+    return render(request, 'pagos/pagos_eliminados.html')
+
+def pagos_eliminados_list(request):
+    if request.is_ajax() and request.method == 'POST':
+
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaPagos':
+            # pagos = Pago.objects.filter(status=0)
+            pagos = EliminacionPagos.objects.filter(respuesta=0)
+            print({"data":[x.toDict() for x in pagos]})
+            return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+    else:
+        response_data = {}
+        response_data['result'] = 'ERROR'
+        response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+        return HttpResponse(serialize('json', response_data), content_type='application/json')
+
+def pagos_pendientes(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaPagos':
+            pagos = Pago.objects.filter(status=2)
+            if params:
+                parametros = params.split(',')
+                f_ini = parametros[0]
+                f_fin = parametros[1]
+                cod_usuario = parametros[2]
+                if f_ini != '' and f_fin == '':
+                    pagos = pagos.filter(fecha_pago__gte=f_ini)
+                if f_fin != '' and f_ini == '':
+                    pagos = pagos.filter(fecha_pago__lte=f_fin)
+                if f_fin != '' and f_ini != '':
+                    pagos = pagos.filter(fecha_pago__range=[f_ini,f_fin])
+                if cod_usuario != '':
+                    pagos = pagos.filter(user__username__contains=cod_usuario)
+            return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
+        else:
+            response_data = {}
+            response_data['result'] = 'ERROR'
+            response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+            return HttpResponse(serialize('json', response_data), content_type='application/json')
+
+
+def saldos(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        params = request.POST.get('params')
+        if action == 'listaSaldos':
+            cursosLlevados = LlevaCurso.objects.all()
+            pagos = Pago.objects.all()
+            hoy = date.today()
+            lista = []
+            for cursoLlevado in cursosLlevados:
+                pagos_usuario = pagos.filter(user__username=cursoLlevado.user.username)
+                pagos_usuario = pagos_usuario.filter(codigo_curso__codigo=cursoLlevado.curso.codigo).filter(status=1)
+                total_inscripcion = pagos_usuario.filter(tipo_pago__nombre='Inscripcion').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+                pagos_inscripcion = cursoLlevado.curso.inscripcion- total_inscripcion
+                if pagos_inscripcion != 0:
+                    fecha_inscripcion = cursoLlevado.fecha_llevado + relativedelta(months=1)
+                    if  hoy > fecha_inscripcion:
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                        ,'cantidad': cursoLlevado.curso.inscripcion
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                    else: 
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
+                        ,'cantidad': cursoLlevado.curso.inscripcion
+                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                total_cuota = pagos_usuario.filter(tipo_pago__nombre='Cuota').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+                pagos_cuota = cursoLlevado.curso.cuota*cursoLlevado.curso.duracion - total_cuota
+                if pagos_cuota != 0:
+                    faltan = pagos_cuota/cursoLlevado.curso.cuota
+                    llevados = cursoLlevado.curso.duracion - faltan
+                    fecha_cuota = hoy
+                    for i in range(int(faltan)):
+                        fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=llevados+i+1)
+                        
+                        if  hoy > fecha_cuota:
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
+                            ,'cantidad': cursoLlevado.curso.cuota
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        else: 
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
+                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
+                            ,'cantidad': cursoLlevado.curso.cuota
+                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+            return JsonResponse({"data":lista}, safe=False)
+        else:
+            response_data = {}
+            response_data['result'] = 'ERROR'
+            response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+            return HttpResponse(serialize('json', response_data), content_type='application/json')
             
-            cursor = connection.cursor() 
-            contadorUsuariosAnual = 'Select count(*) from auth_user where strftime(\''+'%Y'+'\', date_joined) = strftime(\''+'%Y'+'\', \''+'now'+'\')'
-            print(contadorUsuariosAnual)
-            cursor.execute(contadorUsuariosAnual)
-            resultado = cursor.fetchall()
-            print(resultado)
-            resultado = int(list(resultado[0])[0])+1
+def control_pagos(request):
+    pagos = Pago.objects.all()
+    context = {
+        'pagos': pagos
+    }
+    return render(request, 'pagos/control_excel.html', context)
 
-            # print(resultado)
-            # resultado = resultado+1
-            resultado = str(resultado).zfill(3)
-
-            codigo = lastname+currYear+resultado """
-            if form1.is_valid():
-                if form2.is_valid():
-                    """ form1.cleaned_data['username'] = codigo """
-                    new_user = User.objects.create_user(**form1.cleaned_data)
-                    UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                    return HttpResponseRedirect('../control/')
-
-        else:
-            form1 = UserRegisterForm()
-            form2 = UserExtraRegisterForm()
-        context = {'form1': form1, 'form2': form2}
-        return render(request, 'usuarios/create_user.html', context)
-    else:
-        return HttpResponseRedirect('../usuarios/login/')
-
-def view_creatcurso(request):
+def ingreso_view(request):
     if request.user.is_authenticated:
         if request.method == "POST":
-            form1 = CursoRegisterForm(request.POST)
-            if form1.is_valid():
-                new_curso = Curso.objects.create(**form1.cleaned_data)
-                return HttpResponseRedirect('../create_curso/')
+            form = PaymentRegisterForm(request.POST)
+            if form.is_valid():
+                Pago.objects.create(**form.cleaned_data)
+                return HttpResponseRedirect('')
         else:
-            form1 = CursoRegisterForm()
-        context = {'form1': form1}
-        return render(request, 'usuarios/create_curso.html', context)
+            form = PaymentRegisterForm()
+        context = {'form': form}
+        return render(request, 'pagos/ingresar.html', context)
     else:
-        return HttpResponseRedirect('../usuarios/login/')
+        return render(request, 'pagos/ingresar.html')
 
-def view_createasignacion(request):
+def cobros_extra_view(request):
     if request.user.is_authenticated:
         if request.method == "POST":
-            form1 = LlevaCursoRegisterForm(request.POST)
-            if form1.is_valid():
-                LlevaCurso.objects.create(**form1.cleaned_data)
-                return HttpResponseRedirect('../asignar_curso/')
+            form_cobros_extra = CobroExtraForm(request.POST)
+            if form_cobros_extra.is_valid():
+                LlevaCurso.objects.create(**form_cobros_extra.cleaned_data)
+                return HttpResponseRedirect('../cobros_extra/')
         else:
-            form1 = LlevaCursoRegisterForm()
-        context = {'form1': form1}
-        return render(request, 'usuarios/asignar_curso.html', context)
+            form_cobros_extra = CobroExtraForm()
+        context = {'form_cobros_extra': form_cobros_extra}
+        return render(request, 'usuarios/cobros_extra.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
-
-def view_usuarios(request):
-    return render(request, 'usuarios/control.html')
