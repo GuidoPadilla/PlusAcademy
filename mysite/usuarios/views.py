@@ -111,5 +111,4 @@ def view_usuarios(request):
     return render(request, 'usuarios/control.html')
 
 
-def cobros_extra_view(request):
-    return render(request, 'pagos/cobros_extra.html')
+    
