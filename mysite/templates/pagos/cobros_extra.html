@@ -1,1 +1,16 @@
 {% extends 'base.html' %}
+
+{% block content %}
+<h1>Cobros Extra</h1>
+<hr>
+
+<form action="" method="post">
+		<div class="form-container">
+			{% csrf_token %}
+			{{form_cobros_extra}}
+		</div>
+	<div class="btn-container">
+		<input class="btn btn-buscar" type="submit" value="Asignar cobro">
+	</div>
+</form>
+{% endblock content %}
