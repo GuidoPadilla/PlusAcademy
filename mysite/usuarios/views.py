@@ -110,17 +110,6 @@ def view_createasignacion(request):
 def view_usuarios(request):
     return render(request, 'usuarios/control.html')
 
+
 def cobros_extra_view(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form_cobros_extra = CobroExtraForm(request.POST)
-            if form_cobros_extra.is_valid():
-                LlevaCurso.objects.create(**form_cobros_extra.cleaned_data)
-                return HttpResponseRedirect('../cobros_extra/')
-        else:
-            form_cobros_extra = CobroExtraForm()
-        context = {'form_cobros_extra': form_cobros_extra}
-        return render(request, 'usuarios/cobros_extra.html', context)
-    else:
-        return HttpResponseRedirect('../usuarios/login/')
-    
+    return render(request, 'pagos/cobros_extra.html')
