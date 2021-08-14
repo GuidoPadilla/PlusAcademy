@@ -11,7 +11,7 @@ from .models import Pago, EliminacionPagos
 from usuarios.models import LlevaCurso
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from .forms import PaymentRegisterForm
+from .forms import PaymentRegisterForm, CobroExtraForm
 from django.core.serializers import serialize
 import json
 
@@ -240,4 +240,15 @@ def ingreso_view(request):
         return render(request, 'pagos/ingresar.html')
 
 def cobros_extra_view(request):
-    return render(request, 'pagos/cobros_extra.html')
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form_cobros_extra = CobroExtraForm(request.POST)
+            if form_cobros_extra.is_valid():
+                LlevaCurso.objects.create(**form_cobros_extra.cleaned_data)
+                return HttpResponseRedirect('../cobros_extra/')
+        else:
+            form_cobros_extra = CobroExtraForm()
+        context = {'form_cobros_extra': form_cobros_extra}
+        return render(request, 'pagos/cobros_extra.html', context)
+    else:
+        return HttpResponseRedirect('../pagos/login/')
