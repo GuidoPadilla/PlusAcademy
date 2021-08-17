@@ -177,18 +177,20 @@ def saldos(request):
                 if pagos_inscripcion != 0:
                     fecha_inscripcion = cursoLlevado.fecha_llevado + relativedelta(months=1)
                     if  hoy > fecha_inscripcion:
-                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
-                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
-                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
-                        ,'cantidad': cursoLlevado.curso.inscripcion
-                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                            'desc_pag': 'Mora de Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50,
+                            'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo}),
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                            'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'),
+                            'tipo_pago': 'Vencido (Pagar lo antes posible)',
+                            'codigo': cursoLlevado.user.username,
+                            'curso': cursoLlevado.curso.codigo})
                     else: 
-                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                        , 'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
-                        ,'cantidad': cursoLlevado.curso.inscripcion
-                        , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                            'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer',
+                            'cantidad': cursoLlevado.curso.inscripcion,
+                            'codigo': cursoLlevado.user.username,
+                            'curso': cursoLlevado.curso.codigo})
                 total_cuota = pagos_usuario.filter(tipo_pago__nombre='Cuota').aggregate(Sum('cantidad'))['cantidad__sum'] or 0
                 pagos_cuota = cursoLlevado.curso.cuota*cursoLlevado.curso.duracion - total_cuota
                 if pagos_cuota != 0:
@@ -199,18 +201,24 @@ def saldos(request):
                         fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=llevados+i+1)
                         
                         if  hoy > fecha_cuota:
-                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Mora de Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)','cantidad': 50
-                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
-                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)'
-                            ,'cantidad': cursoLlevado.curso.cuota
-                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                                'desc_pag': 'Mora de Cuota',
+                                'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'),
+                                'tipo_pago': 'Vencido (Pagar lo antes posible)',
+                                'cantidad': 50,
+                                'codigo': cursoLlevado.user.username,
+                                'curso': cursoLlevado.curso.codigo})
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                                'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Vencido (Pagar lo antes posible)',
+                                'cantidad': cursoLlevado.curso.cuota,
+                                'codigo': cursoLlevado.user.username,
+                                'curso': cursoLlevado.curso.codigo})
                         else: 
-                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo 
-                            , 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer'
-                            ,'cantidad': cursoLlevado.curso.cuota
-                            , 'codigo': cursoLlevado.user.username, 'curso': cursoLlevado.curso.codigo})
+                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                                'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer',
+                                'cantidad': cursoLlevado.curso.cuota,
+                                'codigo': cursoLlevado.user.username,
+                                'curso': cursoLlevado.curso.codigo})
             return JsonResponse({"data":lista}, safe=False)
         else:
             response_data = {}
