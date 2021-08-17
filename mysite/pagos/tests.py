@@ -2,7 +2,7 @@
 from django.test import TestCase,SimpleTestCase,Client
 from django.urls import reverse, resolve
 from pagos.views import control_view, saldo_view, ingreso_view, pagos, saldos, control_pagos, solicitarEliminacionPago, pagos_solicitados_eliminar_view, pagos_pendientes, solicitud_eliminacion_pago, pagos_eliminados, pagos_eliminados_list
-from pagos.models import TipoPago, Moneda, Pago, EliminacionPagos
+from pagos.models import TipoPago, Moneda, Pago, EliminacionPagos, FormaPago
 import json
 from django.db import models
 
@@ -138,24 +138,45 @@ class TestViews(TestCase):
 
 class testModels(TestCase):
 
-    def test_pago(self):
-        User = 'testUser'
+    def test_model_Pago(self):
         Curso = 'testCurso'
         TipoPago = 'TipoPago'
         FormaPago = 'Efectivo'
         Moneda = 'Q'
 
         newPago = Pago()
-        fecha_pago = models.DateField(auto_now_add=True)
-        user = models.ForeignKey(User, on_delete=models.CASCADE)
-        codigo_curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-        tipo_pago = models.ForeignKey(TipoPago, on_delete=models.CASCADE)
-        forma_pago = models.ForeignKey(FormaPago, on_delete=models.CASCADE, null=True)
-        cantidad = models.IntegerField()
-        moneda = models.ForeignKey(Moneda, on_delete=models.CASCADE)
-        status = models.IntegerField(default = 1)
-        print(type(newPago))
+        newPago.fecha_pago = models.DateField(auto_now_add=True)
+        newPago.cantidad = models.IntegerField()
+        newPago.status = models.IntegerField(default = 1)
         self.assertEquals(str(type(newPago)),"<class 'pagos.models.Pago'>")
+
+    def test_model_EliminacionPagos(self):
+        newPago = Pago()
+        User = 'testUser'
+        User2 = 'testUser2'
+
+        newEliminacionPagos = EliminacionPagos()
+        newEliminacionPagos.pago = newPago
+        newEliminacionPagos.respuesta = models.IntegerField(default=None, null=True)
+        newEliminacionPagos.fechaSolicitud = models.DateTimeField(auto_now_add=True)
+        newEliminacionPagos.fechaRespuesta = models.DateTimeField(null=True, default=None)
+        self.assertEquals(str(type(newEliminacionPagos)),"<class 'pagos.models.EliminacionPagos'>")
+
+    def test_model_TipoPago(self):
+        newTipoPago = TipoPago()
+        newTipoPago.nombre = models.CharField(unique=True, max_length=50)
+        self.assertEquals(str(type(newTipoPago)),"<class 'pagos.models.TipoPago'>")
+
+    def test_model_FormaPago(self):
+        newFormaPago = FormaPago()
+        newFormaPago.nombre = models.CharField(unique=True, max_length=50)
+        self.assertEquals(str(type(newFormaPago)),"<class 'pagos.models.FormaPago'>")
+
+    def test_model_Moneda(self):
+        newMoneda = Moneda()
+        newMoneda.nombre = models.CharField(unique=True, max_length=50)
+        self.assertEquals(str(type(newMoneda)),"<class 'pagos.models.Moneda'>")
+
 
 
 
