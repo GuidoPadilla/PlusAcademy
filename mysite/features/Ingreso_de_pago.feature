@@ -1,9 +1,8 @@
 Feature: Ingreso de registros de pagos
 	Scenario: Ingreso de pago de una cuota mensual de un estudiante 
-		Given: Se quiere registrar un nuevo pago
-		When: El usuario solicita ingresar un pago de cuota mensual de un estudiante
-		Then: Se solicita al usuario los campos requeridos para un registro de pago
-		And: Se guarda el registro en la base de datos
+		Given: Los campos requeridos para un registro de pago
+		When: El usuario solicita ingresar el pago
+		Then: Se registra el nuevo pago en la base de datos
 	Scenario: El administrador quiere poder ver los registros de pagos
 		Given: Los registros de pagos
 		When: El administrador selecciona la pestaña de control de pagos
