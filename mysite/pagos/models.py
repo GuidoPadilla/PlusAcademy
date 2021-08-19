@@ -52,6 +52,7 @@ class Pago(models.Model):
         'tipo_pago': self.tipo_pago.nombre,
         'forma_pago': self.forma_pago.nombre
         }
+        return retDict
     
 class EliminacionPagos(models.Model):
     pago = models.ForeignKey(Pago, on_delete=models.CASCADE)

@@ -192,6 +192,7 @@ def saldos(request):
                             'codigo': cursoLlevado.user.username,
                             'curso': cursoLlevado.curso.codigo})
                 else:
+                    fecha_inscripcion = cursoLlevado.fecha_llevado + relativedelta(months=1)
                     lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
                             'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Pagado',
                             'cantidad': cursoLlevado.curso.inscripcion,
