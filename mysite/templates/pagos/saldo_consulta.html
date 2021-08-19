@@ -18,7 +18,7 @@
         tr.even td:first-child {
             padding-left: 4em;
         }
-        td.sub, tr.subCabecera td {
+        tr td.sub, tr.subCabecera td {
             padding-left: 1.5em;
         }
         /* Style buttons */
@@ -178,9 +178,29 @@
                         .reduce((a, b) => {
                             return a + b*1
                         }, 0)
+                        /* Diferencia de saldo y pagado*/
+                        let totalPorVencer = rows
+                        .data()
+                        .reduce((a, b) => {
+                            return a + ((b.tipo_pago === 'Por Vencer') ? b.cantidad : 0)
+                        }, 0)
+                        let totalPagado = rows
+                        .data()
+                        .reduce((a, b) => {
+                            return a + ((b.tipo_pago === 'Pagado') ? b.cantidad : 0)
+                        }, 0)
+                        let totalVencido = rows
+                        .data()
+                        .reduce((a, b) => {
+                            return a + ((b.tipo_pago === 'Vencido (Pagar lo antes posible)') ? b.cantidad : 0)
+                        }, 0)
+                        let totalSaldo = totalPorVencer + totalVencido
+                        let diferenecia = Math.abs(totalPorVencer+totalVencido-totalPagado)
                         return $('<tr/>')
-                        .append( `<td colspan="2" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Saldo Total:' : 'Saldo SubTotal:'}</td>` )
-                        .append( `<td>${totalPago}</td>` )
+                        .append( `${index%2===0 ?  '<td colspan="1" class="tot"> Saldo Total: ' + totalSaldo + '</td><td colspan="1" class="tot">Total Pagado: '+ totalPagado + '</td>' + '<td colspan="1" class="tot">Diferencia Total: '+ diferenecia + '</td>' : '<td colspan="2" class="sub" style="padding-left: 1.5em;"> SubTotal: </td> <td>' + totalPago + '</td>'}` )
+                        //.append( `<td colspan="2" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Saldo Total:' /*+ totalSaldo*/ : 'Saldo SubTotal:'}</td>` )
+                        //.append( `<td>${totalPago}</td>` )
+
 
                     },
                 },

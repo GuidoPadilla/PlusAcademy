@@ -26,7 +26,6 @@ def pagos(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
         params = request.POST.get('params')
-        print(params)
         if action == 'listaPagos':
             pagos = Pago.objects.filter(status=1)
             if params:
@@ -183,11 +182,18 @@ def saldos(request):
                         lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
                             'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'),
                             'tipo_pago': 'Vencido (Pagar lo antes posible)',
+                            'cantidad': cursoLlevado.curso.inscripcion,
                             'codigo': cursoLlevado.user.username,
                             'curso': cursoLlevado.curso.codigo})
                     else: 
                         lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
                             'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer',
+                            'cantidad': cursoLlevado.curso.inscripcion,
+                            'codigo': cursoLlevado.user.username,
+                            'curso': cursoLlevado.curso.codigo})
+                else:
+                    lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                            'desc_pag': 'Inscripcion', 'fecha_pago': fecha_inscripcion.strftime('%d/%m/%Y'), 'tipo_pago': 'Pagado',
                             'cantidad': cursoLlevado.curso.inscripcion,
                             'codigo': cursoLlevado.user.username,
                             'curso': cursoLlevado.curso.codigo})
@@ -199,7 +205,6 @@ def saldos(request):
                     fecha_cuota = hoy
                     for i in range(int(faltan)):
                         fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=llevados+i+1)
-                        
                         if  hoy > fecha_cuota:
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
                                 'desc_pag': 'Mora de Cuota',
@@ -216,6 +221,13 @@ def saldos(request):
                         else: 
                             lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
                                 'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Por Vencer',
+                                'cantidad': cursoLlevado.curso.cuota,
+                                'codigo': cursoLlevado.user.username,
+                                'curso': cursoLlevado.curso.codigo})
+                    for i in range(int(llevados)):
+                        fecha_cuota = cursoLlevado.fecha_llevado + relativedelta(months=i+1)
+                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
+                                'desc_pag': 'Cuota', 'fecha_pago': fecha_cuota.strftime('%d/%m/%Y'), 'tipo_pago': 'Pagado',
                                 'cantidad': cursoLlevado.curso.cuota,
                                 'codigo': cursoLlevado.user.username,
                                 'curso': cursoLlevado.curso.codigo})
