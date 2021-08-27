@@ -1,6 +1,5 @@
 from behave import *
 import models
-import views
 
 
 @given('Los campos requeridos para un registro de pago')

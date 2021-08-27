@@ -11,5 +11,6 @@ class PaymentRegisterForm(ModelForm):
 
 class CobroExtraForm(forms.Form):
     codigo_curso = forms.fields.CharField(label='Código de Curso', max_length=100)
+    #user = forms.fields.CharField(label='Usuario', max_length=100, widget=forms.TextInput(attrs={'placeholder':'Dejar en blanco para aplicar a todo el curso'}))
     monto = forms.fields.DecimalField(label='Monto', decimal_places=2, max_digits= 6)
     fecha_limite = forms.fields.DateField(label='Fecha Límite')
