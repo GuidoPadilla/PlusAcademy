@@ -76,7 +76,6 @@ def view_creatcurso(request):
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
-#Arreglar con el nuevo modelo de cobros y curso
 def view_createasignacion(request):
     if request.user.is_authenticated:
         if request.method == "POST":
