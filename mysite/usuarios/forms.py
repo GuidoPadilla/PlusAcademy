@@ -26,15 +26,18 @@ class UserExtraRegisterForm(ModelForm):
 
     class Meta:
         model = UserExtra
-        fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol']
+        fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol', 'nacionalidad']
 
 class LlevaCursoRegisterForm(ModelForm):
 
     class Meta:
         model = LlevaCurso
         fields = ['user','curso', 'fecha_llevado']
+    def __init__(self, *args, **kwrgs):
+        super(LlevaCursoRegisterForm, self).__init__(*args, **kwrgs)
+        self.fields['user'].queryset = User.objects.filter(userextra__rol__nombre='estudiante')
 
 class CursoRegisterForm(ModelForm):
     class Meta:
         model = Curso
-        fields = ['codigo', 'nombre', 'inscripcion', 'cuota', 'otros', 'duracion']
+        fields = ['codigo', 'nombre', 'inscripcion_quetzales', 'cuota_quetzales', 'inscripcion_dolares', 'cuota_dolares', 'duracion']

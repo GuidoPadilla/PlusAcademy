@@ -1,13 +1,16 @@
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
-from pagos.models import Pago
+from pagos.models import Pago, Cobro
 
 class PaymentRegisterForm(ModelForm):
 
     class Meta:
         model = Pago
-        fields = ['codigo_curso',  'user', 'tipo_pago', 'forma_pago', 'moneda', 'cantidad']
+        fields = ['codigo_curso',  'user', 'cobro', 'forma_pago', 'moneda', 'cantidad']
+    def __init__(self, *args, **kwrgs):
+        super(PaymentRegisterForm, self).__init__(*args, **kwrgs)
+        self.fields['user'].queryset = User.objects.filter(userextra__rol__nombre='estudiante')
 
 class CobroExtraForm(forms.Form):
     codigo_curso = forms.fields.CharField(label='Código de Curso', max_length=100)

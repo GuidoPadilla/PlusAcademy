@@ -7,9 +7,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from .models import Curso, UserExtra, LlevaCurso
+from pagos.models import Cobro, Moneda, TipoPago
 from django.db import connection
 from django.core.serializers import serialize
 import datetime
+from dateutil.relativedelta import relativedelta
 
 def view_login(request):
     if request.user.is_authenticated != True:
@@ -37,7 +39,7 @@ def logout_user(request):
 def lista_usuarios(request):
     if request.is_ajax() and request.method == 'POST':
         users = UserExtra.objects.all()
-        #users = users.filter(userextra__rol__nombre='estudiante')
+        users = users.filter(rol__nombre='estudiante')
         return JsonResponse({"data":[x.toDict() for x in users]}, safe=False) 
 
 def view_createuser(request):
@@ -45,23 +47,6 @@ def view_createuser(request):
         if request.method == "POST":
             form1 = UserRegisterForm(request.POST)
             form2 = UserExtraRegisterForm(request.POST)
-            """ now = datetime.datetime.now()
-            currYear = '{:02d}'.format(now.year)
-            currYear = currYear[2:4]
-            lastname = request.POST['last_name']
-            lastname = lastname[0:3].lower()
-            
-            cursor = connection.cursor() 
-            contadorUsuariosAnual = 'Select count(*) from auth_user where strftime(\''+'%Y'+'\', date_joined) = strftime(\''+'%Y'+'\', \''+'now'+'\')'
-            print(contadorUsuariosAnual)
-            cursor.execute(contadorUsuariosAnual)
-            resultado = cursor.fetchall()
-            print(resultado)
-            resultado = int(list(resultado[0])[0])+1
-            # print(resultado)
-            # resultado = resultado+1
-            resultado = str(resultado).zfill(3)
-            codigo = lastname+currYear+resultado """
             if form1.is_valid():
                 if form2.is_valid():
                     """ form1.cleaned_data['username'] = codigo """
@@ -91,11 +76,29 @@ def view_creatcurso(request):
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
+#Arreglar con el nuevo modelo de cobros y curso
 def view_createasignacion(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             form1 = LlevaCursoRegisterForm(request.POST)
             if form1.is_valid():
+                user = form1.cleaned_data['user']
+                user = User.objects.get(username=user)
+                fecha_llevado = form1.cleaned_data['fecha_llevado']
+                curso = Curso.objects.get(codigo = form1.cleaned_data['curso'])
+                inscripcion_quetzales = curso.inscripcion_quetzales
+                inscripcion_dolares = curso.inscripcion_dolares
+                cuota_quetzales  = curso.cuota_quetzales
+                cuota_dolares  = curso.cuota_dolares
+                monto_inscripcion = inscripcion_quetzales if user.userextra.nacionalidad.nombre == 'Guatemala' else inscripcion_dolares
+                monto_cuota = cuota_quetzales if user.userextra.nacionalidad.nombre == 'Guatemala' else cuota_dolares
+                moneda = Moneda.objects.get(nombre = 'Quetzal') if user.userextra.nacionalidad.moneda.nombre == 'Quetzal' else Moneda.objects.get(nombre = 'Dolar')
+                duracion = curso.duracion
+                fecha_inscripcion = fecha_llevado + relativedelta(months=1)
+                Cobro.objects.create(user=user, fecha_cobro = fecha_inscripcion, monto = monto_inscripcion, tipo_pago = TipoPago.objects.get(nombre = 'Inscripcion'), tipo_moneda = moneda)
+                for i in range(duracion):
+                    fecha_cuota  = fecha_llevado + relativedelta(months=1+i)
+                    Cobro.objects.create(user=user, fecha_cobro = fecha_cuota, monto = monto_cuota, tipo_pago = TipoPago.objects.get(nombre = 'Cuota'), tipo_moneda = moneda)
                 LlevaCurso.objects.create(**form1.cleaned_data)
                 return HttpResponseRedirect('../asignar_curso/')
         else:
