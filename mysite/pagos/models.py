@@ -59,6 +59,7 @@ class Pago(models.Model):
         retDict ={
         'fecha_pago': self.fecha_pago.strftime('%d/%m/%Y'),
         'user': self.user.username,
+        'userInfo': 'Nombre: ' + self.user.first_name + ' ' + self.user.last_name + ' - Código: ' + self.user.username,
         'id': self.id, 'cantidad': self.cantidad,
         'codigo_curso': self.codigo_curso.codigo,
         'moneda': self.moneda.nombre,
@@ -79,6 +80,7 @@ class EliminacionPagos(models.Model):
         retDict = {
         'id': self.id,
         'pago_user': self.pago.user.username,
+        'userInfo': 'Nombre: ' + self.pago.user.first_name + ' ' + self.pago.user.last_name + ' - Código: ' + self.pago.user.username,
         'pago_codigo_curso': self.pago.codigo_curso.codigo,
         'fecha_pago_procesado': self.pago.fecha_pago.strftime('%d/%m/%Y'),
         'tipo_pago': self.pago.cobro.tipo_pago.nombre,

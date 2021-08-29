@@ -88,6 +88,11 @@ input[type=number] {
   
 }
 
+input[type=submit] {
+  background-color: black;
+  color: white;
+}
+
 
 table {
   font-family: arial, sans-serif;

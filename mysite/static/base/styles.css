@@ -112,6 +112,15 @@ td.sub, tr.subCabecera td {
     border-radius: 5px 5px 0 0;
     padding: 35px;
 }
+.modal-confirm .modal-header2 {
+  background: rgb(214, 0, 0);
+  border-bottom: none;   
+  position: relative;
+  text-align: center;
+  margin: -20px -20px 0;
+  border-radius: 5px 5px 0 0;
+  padding: 35px;
+}
 .modal-confirm h4 {
     text-align: center;
     font-size: 36px;

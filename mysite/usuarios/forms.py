@@ -1,7 +1,8 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
-from .models import Curso, UserExtra, LlevaCurso
+from .models import Curso, UserExtra, LlevaCurso, Sexo, NivelAcademico, Rol, Nacionalidad
 
 class AuthenticationAddForm(forms.Form):
     username = forms.CharField(label="Nombre de Usuario", max_length=150)
@@ -22,17 +23,31 @@ class UserRegisterForm(ModelForm):
         'Nivel academico': forms.ForeignKey(NivelAcademico, on_delete=models.CASCADE)
         'Rol': forms.ForeignKey(Rol, on_delete=models.CASCADE)
     '''
-class UserExtraRegisterForm(ModelForm):
+class UserExtraRegisterForm(Form):
+
+    dpi = forms.CharField()
+    telefono = forms.CharField()
+    direccion = forms.CharField()
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), input_formats=settings.DATE_INPUT_FORMATS)
+    sexo = forms.ModelChoiceField(queryset=Sexo.objects.all())
+    nivel_academico = forms.ModelChoiceField(queryset=NivelAcademico.objects.all())
+    rol = forms.ModelChoiceField(queryset=Rol.objects.all())
+    nacionalidad = forms.ModelChoiceField(queryset=Nacionalidad.objects.all())
+
 
     class Meta:
         model = UserExtra
-        fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol', 'nacionalidad']
+        # fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol', 'nacionalidad']
 
-class LlevaCursoRegisterForm(ModelForm):
+class LlevaCursoRegisterForm(Form):
+
+    user = forms.ModelChoiceField(queryset=User.objects.all())
+    curso = forms.ModelChoiceField(queryset=Curso.objects.all())
+    fecha_llevado = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), input_formats=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = LlevaCurso
-        fields = ['user','curso', 'fecha_llevado']
+        #fields = ['user','curso', 'fecha_llevado']
     def __init__(self, *args, **kwrgs):
         super(LlevaCursoRegisterForm, self).__init__(*args, **kwrgs)
         self.fields['user'].queryset = User.objects.filter(userextra__rol__nombre='estudiante')

@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    #'django.templatetags.static',
+    #'django.contrib.staticfiles',
+    'django.templatetags.static',
     'usuarios',
     'pagos',
 ]
@@ -117,6 +117,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+DATE_INPUT_FORMATS = ['%d/%m/%Y']
 
 LOGIN_URL='/usuarios/login/'
 

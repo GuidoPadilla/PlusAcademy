@@ -1,8 +1,4 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
-</head>
-
-{% extends 'base.html' %}
+{% extends 'base_datatable.html' %}
 
 {% block content %}
 
@@ -16,4 +12,18 @@
 		</div>
 	</form>
 </div>
+<script type="text/javascript">
+	$(document).ready(() => {
+		$("#id_fecha_llevado").datepicker({
+            dateFormat: "dd/mm/yy",
+			altFormat: "yy-mm-dd",
+			showButtonPanel: true,
+			// changeYear: true,
+			showOtherMonths: true,
+			selectOtherMonths: false,
+			maxDate: '0',
+			yearRange: String(parseInt(new Date().getFullYear()) - 1) + ':'+ String(new Date().getFullYear()),
+        }).datepicker("setDate", new Date())
+	})
+</script>
 {% endblock content %}

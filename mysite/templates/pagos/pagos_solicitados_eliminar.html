@@ -38,7 +38,7 @@
         <div id="modalConfirmation" class="modal fade">
             <div class="modal-dialog modal-confirm">
                 <div class="modal-content">
-                    <div class="modal-header2 justify-content-center">
+                    <div class="modal-header justify-content-center">
                         <div class="icon-box">
                             <i class="fa fa-check"></i>
                         </div>
@@ -46,24 +46,25 @@
                     </div>
                     <div class="modal-body text-center">
                         <h4>Confirmado!</h4>	
-                        <p>Has confirmado eliminacion del pago</p>
+                        <p>Has confirmado la eliminación del pago</p>
                         <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Modal HTML -->
         <div id="modalRejection" class="modal fade">
             <div class="modal-dialog modal-confirm">
                 <div class="modal-content">
-                    <div class="modal-header1 justify-content-center">
+                    <div class="modal-header2 justify-content-center">
                         <div class="icon-box">
-                            <i class="fa fa-times"></i>
+                            <i class="fa fa-check"></i>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body text-center">
                         <h4>Rechazado!</h4>	
-                        <p>Has rechazado la eliminacion del pago</p>
+                        <p>Has rechazado la solicitud de eliminacion del pago</p>
                         <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
                     </div>
                 </div>
@@ -118,6 +119,8 @@
     )
 
     $(document).ready(() => {
+        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2}
+        let numberFormat = new Intl.NumberFormat('en-US', formatOptions)
         let table = $('#data_table').DataTable({
             ajax: {
                     url: '/pagos/pagos_pendientes/',
@@ -158,7 +161,7 @@
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
                 rowGroup: {
-                    dataSrc: [ 'user', 'tipo_pago' ],
+                    dataSrc: [ 'userInfo', 'tipo_pago' ],
                     endRender: ( rows, group, index ) => {
                         let totalPago = rows
                         .data()
@@ -168,13 +171,17 @@
                         }, 0)
                         return $('<tr/>')
                         .append( `<td colspan="5" class=${index%2===0 ? "tot" : "sub"}><strong>${index%2===0 ?  'Total:' : 'SubTotal:'}</strong></td>` )
-                        .append( `<td colspan="2"><strong>Q${totalPago}</strong></td>` )
+                        .append( `<td colspan="3"><strong>Q${numberFormat.format(totalPago)}</strong></td>` )
 
                     },
                 },
                 columnDefs: [ 
-                    { targets: [2, 4], visible: false },
-                    { searchable: false, targets: 5 }
+                    { targets: [0, 2], visible: false },
+                    { searchable: false, targets: 5 },
+                    {
+                        targets: 7,
+                        render: $.fn.dataTable.render.number(',', '.', 2, '')
+                    },
                 ],
                 rowId: 'id'
         })

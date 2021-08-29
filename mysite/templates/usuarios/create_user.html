@@ -1,8 +1,4 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
-</head>
-
-{% extends 'base.html' %}
+{% extends 'base_datatable.html' %}
 
 {% block content %}
 <!-- <h1>Crear Usuario</h1>
@@ -19,4 +15,19 @@
 		</div>
 	</form>
 </div>
+
+<script type="text/javascript">
+	$(document).ready(() => {
+		$("#id_fecha_nacimiento").datepicker({
+            dateFormat: "dd/mm/yy",
+			altFormat: "yy-mm-dd",
+			showButtonPanel: true,
+			changeYear: true,
+			showOtherMonths: true,
+			selectOtherMonths: false,
+			yearRange: String(parseInt(new Date().getFullYear()) - 100) + ':'+ String(new Date().getFullYear()),
+        	maxDate: '0',
+        })
+	})
+</script>
 {% endblock content %}

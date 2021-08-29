@@ -34,40 +34,37 @@
             </thead>
         </table>
         <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog mw-100 w-50" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h4 class="modal-title">Solicitar Eliminación del Pago</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table id="pago_details" class="table table-bordered" style="width:70%; margin:auto;">
-                                    <thead>
-                                    <tr>
-                                            <th>Codigo Estudiante</th>
-                                            <th>Codigo Curso</th>
-                                            <th>Tipo de Pago</th>
-                                            <th>Forma de Pago</th>
-                                            <th>Fecha</th>
-                                            <th>Tipo de Moneda</th>
-                                            <th>Monto</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr></tr>
-                                    </tbody>
-                                </table>
+            <div class="modal-dialog" role="document" style="min-width: 60%; width:60%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Solicitar Eliminación del Pago</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="pago_details" class="table table-bordered" style="margin: 0 auto">
+                                        <thead>
+                                        <tr>
+                                                <th>Codigo Estudiante</th>
+                                                <th>Codigo Curso</th>
+                                                <th>Tipo de Pago</th>
+                                                <th>Forma de Pago</th>
+                                                <th>Fecha</th>
+                                                <th>Tipo de Moneda</th>
+                                                <th>Monto</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn-solicitar-eliminacion" id="btn-solicitar-eliminacion">Solicitar Eliminación</button>
-                </div>
-            </div><!-- /.modal-content -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn-solicitar-eliminacion" id="btn-solicitar-eliminacion">Solicitar Eliminación</button>
+                    </div>
+                </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
         <!-- Modal HTML -->
@@ -137,6 +134,8 @@
     )
 
     $(document).ready(() => {
+        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2};
+        let numberFormat = new Intl.NumberFormat('en-US', formatOptions);
         let table = $('#data_table').DataTable({
             ajax: {
                     url: '/pagos/pagos/',
@@ -178,7 +177,7 @@
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
                 rowGroup: {
-                    dataSrc: [ 'user', 'tipo_pago' ],
+                    dataSrc: [ 'userInfo', 'tipo_pago' ],
                     endRender: ( rows, group, index ) => {
                         let totalPago = rows
                         .data()
@@ -188,13 +187,17 @@
                         }, 0)
                         return $('<tr/>')
                         .append( `<td colspan="5" class=${index%2===0 ? "tot" : "sub"}><strong>${index%2===0 ?  'Total:' : 'SubTotal:'}</strong></td>` )
-                        .append( `<td colspan="2"><strong>Q${totalPago}</strong></td>` )
+                        .append( `<td colspan="3"><strong>Q${numberFormat.format(totalPago)}</strong></td>` )
 
                     },
                 },
                 columnDefs: [ 
-                    { targets: [2, 4], visible: false },
-                    { searchable: false, targets: 5 }
+                    { targets: [0, 2], visible: false },
+                    { searchable: false, targets: 5 },
+                    {
+                        targets: 7,
+                        render: $.fn.dataTable.render.number(',', '.', 2, '')
+                    },
                 ],
                 rowId: 'id'
         })
@@ -280,12 +283,18 @@
                 "data": list,
                 "columns": [
                   { data: 'user' },
+                  { data: 'fecha_pago' },
                   { data: 'codigo_curso' },
                   { data: 'tipo_pago' },
                   { data: 'forma_pago' },
-                  { data: 'fecha_pago' },
                   { data: 'tipo_moneda' },
                   { data: 'monto' },
+                ],
+                columnDefs: [ 
+                    {
+                        targets: 6,
+                        render: $.fn.dataTable.render.number(',', '.', 2, '')
+                    },
                 ],
             })
             pago_details_table.clear();

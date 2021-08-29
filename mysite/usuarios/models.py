@@ -87,8 +87,17 @@ class UserExtra(models.Model):
     def __str__(self):
         return self.user.username
     def toDict (self):
-        return {'codigo':self.user.username, 'nombres': self.user.first_name+' ' +self.user.last_name,
-        'correo': self.user.email, 'dpi': self.dpi, 'telefono': self.telefono, 'direccion': self.direccion,
-        'edad': str(int(datetime.today().strftime('%Y'))-int(self.fecha_nacimiento.strftime('%Y'))),
-        'sexo': self.sexo.nombre, 'rol': self.rol.nombre, 'date_joined': self.user.date_joined.strftime('%d/%m/%Y'),
-        'nacionalidad': self.nacionalidad.nombre}
+        return {
+            'codigo':self.user.username,
+            'nombres': self.user.first_name+' ' +self.user.last_name,
+            'correo': self.user.email,
+            'dpi': self.dpi,
+            'telefono': self.telefono,
+            'direccion': self.direccion,
+            'edad': str(int(datetime.today().strftime('%Y'))-int(self.fecha_nacimiento.strftime('%Y'))),
+            'fecha_nacimiento': self.fecha_nacimiento.strftime('%d/%m/%Y'),
+            'sexo': self.sexo.nombre,
+            'rol': self.rol.nombre,
+            'date_joined': self.user.date_joined.strftime('%d/%m/%Y'),
+            'nacionalidad': self.nacionalidad.nombre
+        }
