@@ -11,7 +11,7 @@ from .models import Cobro, Pago, EliminacionPagos, TipoPago
 from usuarios.models import LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from .forms import PaymentRegisterForm, CobroExtraForm
+from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm
 from django.core.serializers import serialize
 import json
 
@@ -318,6 +318,32 @@ def cobros_extra_view(request):
                 return HttpResponseRedirect('../cobros_extra/')
         else:
             form_cobros_extra = CobroExtraForm()
+        context = {'form_cobros_extra': form_cobros_extra}
+        return render(request, 'pagos/cobros_extra.html', context)
+    else:
+        return HttpResponseRedirect('../pagos/login/')
+
+
+def cobros_extra_a_curso(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form_cobros_extra = CobroExtraCursoForm(request.POST)
+            if form_cobros_extra.is_valid():
+                
+                asignaciones = LlevaCurso.objects.all()
+                for asig in asignaciones:
+                    if asig.curso == form_cobros_extra.Curso:
+                        
+                        cobro = Cobro(user = asig.user, 
+                        fecha_cobro = form_cobros_extra.fecha_cobro,
+                        monto = form_cobros_extra.monto,
+                        tipo_pago = form_cobros_extra.tipo_pago,
+                        tipo_moneda = form_cobros_extra.tipo_moneda)
+
+                        cobro.save()
+                return HttpResponseRedirect('../cobros_extra/')
+        else:
+            form_cobros_extra = CobroExtraCursoForm()
         context = {'form_cobros_extra': form_cobros_extra}
         return render(request, 'pagos/cobros_extra.html', context)
     else:
