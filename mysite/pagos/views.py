@@ -218,23 +218,42 @@ def saldos(request):
                     diferencia = cobro.monto - (pagos_cobro.aggregate(Sum('cantidad'))['cantidad__sum'] or 0)
                     if diferencia == 0:
                         for pago in pagos_cobro:
-                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
-                                'desc_pag': cobro.tipo_pago.nombre, 'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
+                            lista.append({
+                                'desc_est': 'Nombre: '
+                                                +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
+                                            ' - Código Estudiante: '
+                                                +cursoLlevado.user.username,
+                                'nombre_est': cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name,
+                                'codigo_curso': cursoLlevado.curso.codigo,
+                                'desc_pag': cobro.tipo_pago.nombre,
+                                'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
                                 'tipo_pago': 'Pagado',
                                 'cantidad': pago.cantidad,
                                 'codigo': pago.user.username,
                                 'curso': pago.codigo_curso.codigo})
                     else:
                         for pago in pagos_cobro:
-                            lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
-                                'desc_pag': cobro.tipo_pago.nombre, 'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
+                            lista.append({
+                                'desc_est': 'Nombre: '
+                                                +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
+                                            ' - Código Estudiante: '
+                                                +cursoLlevado.user.username,
+                                'nombre_est': cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name,
+                                'codigo_curso': cursoLlevado.curso.codigo,
+                                'desc_pag': cobro.tipo_pago.nombre,
+                                'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
                                 'tipo_pago': 'Pagado',
                                 'cantidad': pago.cantidad,
                                 'codigo': pago.user.username,
                                 'curso': pago.codigo_curso.codigo})
                         estado = 'Vencido (Pagar lo antes posible)' if hoy > cobro.fecha_cobro else 'Por Vencer'
-                        lista.append({'desc_est': 'codigo: ' + cursoLlevado.user.username + ', curso: ' + cursoLlevado.curso.codigo,
-                                'desc_pag': cobro.tipo_pago.nombre, 'fecha_pago': cobro.fecha_cobro.strftime('%d/%m/%Y'),
+                        lista.append({
+                                'desc_est': 'Nombre: '
+                                                +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
+                                            ' - Código Estudiante: '
+                                                +cursoLlevado.user.username,
+                                'desc_pag': cobro.tipo_pago.nombre,
+                                'fecha_pago': cobro.fecha_cobro.strftime('%d/%m/%Y'),
                                 'tipo_pago': estado,
                                 'cantidad': diferencia,
                                 'codigo': cobro.user.username,
