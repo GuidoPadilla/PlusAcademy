@@ -44,5 +44,4 @@ class CobroExtraCursoForm(Form):
         
 
     def __init__(self, *args, **kwrgs):
-        super(CobroExtraForm, self).__init__(*args, **kwrgs)
-        self.fields['user'].queryset = User.objects.filter(userextra__rol__nombre='estudiante')
+        super(CobroExtraCursoForm, self).__init__(*args, **kwrgs)
