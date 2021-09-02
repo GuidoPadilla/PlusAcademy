@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Cobro, Pago, EliminacionPagos
+from .models import Cobro, Pago, EliminacionPagos, TipoPago
 from usuarios.models import LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
@@ -222,7 +222,9 @@ def saldos(request):
                                 'desc_est': 'Nombre: '
                                                 +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
                                             ' - Código Estudiante: '
-                                                +cursoLlevado.user.username,
+                                                +cursoLlevado.user.username+
+                                            ' - Moneda: '
+                                                +moneda_usuario,
                                 'nombre_est': cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name,
                                 'codigo_curso': cursoLlevado.curso.codigo,
                                 'desc_pag': cobro.tipo_pago.nombre,
@@ -237,7 +239,9 @@ def saldos(request):
                                 'desc_est': 'Nombre: '
                                                 +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
                                             ' - Código Estudiante: '
-                                                +cursoLlevado.user.username,
+                                                +cursoLlevado.user.username+
+                                            ' - Moneda: '
+                                                +moneda_usuario,
                                 'nombre_est': cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name,
                                 'codigo_curso': cursoLlevado.curso.codigo,
                                 'desc_pag': cobro.tipo_pago.nombre,
@@ -251,11 +255,29 @@ def saldos(request):
                                 'desc_est': 'Nombre: '
                                                 +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
                                             ' - Código Estudiante: '
-                                                +cursoLlevado.user.username,
+                                                +cursoLlevado.user.username+
+                                            ' - Moneda: '
+                                                +moneda_usuario,
                                 'desc_pag': cobro.tipo_pago.nombre,
                                 'fecha_pago': cobro.fecha_cobro.strftime('%d/%m/%Y'),
                                 'tipo_pago': estado,
                                 'cantidad': diferencia,
+                                'codigo': cobro.user.username,
+                                'curso': cursoLlevado.curso.codigo})
+                        if estado == 'Vencido (Pagar lo antes posible)' and cobro.tipo_pago.nombre != 'Mora':
+                            if not cobros.filter(relacionado=cobro.id):
+                                Cobro.objects.create(user=cobro.user, fecha_cobro=cobro.fecha_cobro, monto=50, tipo_pago=TipoPago.objects.get(nombre='Mora'), tipo_moneda=cursoLlevado.user.userextra.nacionalidad.moneda, relacionado=cobro)
+                                lista.append({
+                                'desc_est': 'Nombre: '
+                                                +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
+                                            ' - Código Estudiante: '
+                                                +cursoLlevado.user.username+
+                                            ' - Moneda: '
+                                                +moneda_usuario,
+                                'desc_pag': 'Mora',
+                                'fecha_pago': cobro.fecha_cobro.strftime('%d/%m/%Y'),
+                                'tipo_pago': estado,
+                                'cantidad': 50,
                                 'codigo': cobro.user.username,
                                 'curso': cursoLlevado.curso.codigo})
             return JsonResponse({"data":lista}, safe=False)

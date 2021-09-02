@@ -26,6 +26,7 @@ class Cobro(models.Model):
     monto = models.FloatField(null = False)
     tipo_pago = models.ForeignKey(TipoPago, on_delete=models.CASCADE)
     tipo_moneda = models.ForeignKey(Moneda, on_delete=models.CASCADE)
+    relacionado = models.ForeignKey('self', on_delete=models.CASCADE, null=True, default=None)
 
     def __str__(self):
         return self.tipo_pago.nombre + ' ' + self.fecha_cobro.strftime('%d/%m/%Y')
