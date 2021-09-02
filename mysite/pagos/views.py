@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Cobro, Pago, EliminacionPagos, cobrosExtra
+from .models import Cobro, Pago, EliminacionPagos
 from usuarios.models import LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
@@ -273,7 +273,7 @@ def cobros_extra_view(request):
         if request.method == "POST":
             form_cobros_extra = CobroExtraForm(request.POST)
             if form_cobros_extra.is_valid():
-                cobrosExtra.objects.create(**form_cobros_extra.cleaned_data)
+                Cobro.objects.create(**form_cobros_extra.cleaned_data)
                 return HttpResponseRedirect('../cobros_extra/')
         else:
             form_cobros_extra = CobroExtraForm()

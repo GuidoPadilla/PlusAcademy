@@ -93,7 +93,3 @@ class EliminacionPagos(models.Model):
         }
         return retDict
 
-class cobrosExtra(models.Model):
-    codigo_curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    monto = models.DecimalField(default=0.00, decimal_places=2, max_digits=8)
-    fecha_limite = models.DateField()

@@ -1,8 +1,6 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
-</head>
 
-{% extends 'base.html' %}
+
+{% extends 'base_datatable.html' %}
 
 {% block content %}
 <h1>Cobros Extra</h1>
@@ -19,4 +17,14 @@
 	</form>
 </div>
 </form>
+<script type="text/javascript">
+
+$(document).ready(() => {
+	var $j = jQuery.noConflict();
+	$j('#id_fecha_cobro').datepicker({
+            dateFormat: "dd/mm/yy",
+
+        });
+	})
+</script>
 {% endblock content %}
