@@ -310,7 +310,7 @@ def cobros_extra_a_curso(request):
                 
                 asignaciones = LlevaCurso.objects.all()
                 for asig in asignaciones:
-                    if asig.curso == form_cobros_extra.Curso:
+                    if asig.curso == form_cobros_extra.fields['Curso']:
                         
                         cobro = Cobro(user = asig.user, 
                         fecha_cobro = form_cobros_extra.fecha_cobro,
