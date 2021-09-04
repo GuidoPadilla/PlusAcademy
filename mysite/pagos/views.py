@@ -335,11 +335,10 @@ def cobros_extra_a_curso(request):
                     if asig.curso == form_cobros_extra.fields['Curso']:
                         
                         cobro = Cobro(user = asig.user, 
-                        fecha_cobro = form_cobros_extra.fecha_cobro,
-                        monto = form_cobros_extra.monto,
-                        tipo_pago = form_cobros_extra.tipo_pago,
-                        tipo_moneda = form_cobros_extra.tipo_moneda)
-
+                        fecha_cobro = form_cobros_extra.fields['fecha_cobro'],
+                        monto = form_cobros_extra.fields['monto'],
+                        tipo_pago = form_cobros_extra.fields['tipo_pago'],
+                        tipo_moneda = form_cobros_extra.fields['tipo_moneda'])
                         cobro.save()
                 return HttpResponseRedirect('../cobros_extra/')
         else:
