@@ -28,7 +28,7 @@
                     <th>Codigo de Curso</th>
                     <th>Descripcion de pago</th>
                     <th>Fecha Pago</th>
-                    <th>Monto (Q)</th>
+                    <th>Monto</th>
                 </tr>
             </thead>
         </table>
@@ -113,7 +113,7 @@
                     { data: 'curso' },
                     { data: 'desc_pag' },
                     { data: 'fecha_pago' },
-                    { data: 'cantidad' },
+                    { data: 'cantidad' }
                 ],
                 order: [[2, 'asc'], [1, 'asc']],
                 rowGroup: {
@@ -143,6 +143,7 @@
                         }, 0)
                         let totalSaldo = totalPorVencer + totalVencido + totalPagado
                         let diferenecia = Math.abs(totalSaldo-totalPagado)
+                        //let moneda = rows.data()[0].moneda
                         return $('<tr/>')
                         .append( `${index%2===0 ?  '<td colspan="2" class="tot" style="background-color: rgb(116, 186, 255);"> Saldo Total: ' + numberFormat.format(totalSaldo) + '</td><td colspan="1" class="tot" style="background-color: rgb(116, 186, 255);">Total Pagado: '+ numberFormat.format(totalPagado) + '</td>' + '<td colspan="1" class="tot" style="background-color: rgb(116, 186, 255);">Diferencia Total: '+ numberFormat.format(diferenecia) + '</td>' : '<td colspan="3" class="sub" style="padding-left: 1.5em; background-color: rgb(106, 168, 230);"> SubTotal: </td> <td style="background-color: rgb(106, 168, 230);">' + numberFormat.format(totalPago) + '</td>'}` )
                         //.append( `<td colspan="2" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'Saldo Total:' /*+ totalSaldo*/ : 'Saldo SubTotal:'}</td>` )
