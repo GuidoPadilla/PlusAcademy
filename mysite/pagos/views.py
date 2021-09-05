@@ -329,17 +329,19 @@ def cobros_extra_a_curso(request):
         if request.method == "POST":
             form_cobros_extra = CobroExtraCursoForm(request.POST)
             if form_cobros_extra.is_valid():
-                
-                asignaciones = LlevaCurso.objects.all()
-                for asig in asignaciones:
-                    if asig.curso == form_cobros_extra.fields['Curso']:
+
+                for asig in LlevaCurso.objects.all():
+                    
+                    if asig.curso == form_cobros_extra.cleaned_data['Curso']:
+                        data = {}
+                        data['user'] = asig.user
+                        data['fecha_cobro'] = form_cobros_extra.cleaned_data['fecha_cobro']
+                        data['monto'] = form_cobros_extra.cleaned_data['monto']
+                        data['tipo_moneda'] = form_cobros_extra.cleaned_data['tipo_moneda']
+                        data['tipo_pago'] = form_cobros_extra.cleaned_data['tipo_pago']
+                        data['relacionado'] = None
+                        Cobro.objects.create(**data)
                         
-                        cobro = Cobro(user = asig.user, 
-                        fecha_cobro = form_cobros_extra.fields['fecha_cobro'],
-                        monto = form_cobros_extra.fields['monto'],
-                        tipo_pago = form_cobros_extra.fields['tipo_pago'],
-                        tipo_moneda = form_cobros_extra.fields['tipo_moneda'])
-                        cobro.save()
                 return HttpResponseRedirect('../cobros_extra/')
         else:
             form_cobros_extra = CobroExtraCursoForm()
