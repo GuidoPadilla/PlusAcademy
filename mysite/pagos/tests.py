@@ -6,6 +6,7 @@ from pagos.models import TipoPago, Moneda, Pago, EliminacionPagos, FormaPago
 import json
 from django.db import models
 
+
 class TestUrls(SimpleTestCase):
 
     def test_url_pagos_control(self):
@@ -84,7 +85,6 @@ class TestViews(TestCase):
     def test_pagos(self):
         #Incomplete
         client = Client()
-        response = client.get('/pagos/lista_pagos/')
 
 
     def test_solicitarEliminacionPago(self):
@@ -178,7 +178,35 @@ class testModels(TestCase):
         self.assertEquals(str(type(newMoneda)),"<class 'pagos.models.Moneda'>")
 
 
+class Integration(TestCase):
+    def test_control_integration(self):
+        url = reverse('pagos:pagos_control')
+        print(resolve(url))
+        self.assertEquals(resolve(url).func,control_view)
+        TestViews.test_control_view(self)
+        client = Client()
+        response = client.get('/pagos/control/')
+        self.assertTemplateUsed(response, 'pagos/control.html')
 
+    def test_saldo_integration(self):
+        url = reverse('pagos:pagos_saldo')
+        print(resolve(url))
+        self.assertEquals(resolve(url).func,saldo_view)
+        client = Client()
+        response = client.get('/pagos/saldo_consulta/')
+        self.assertTemplateUsed(response, 'pagos/saldo_consulta.html')
 
-
+    def test_pago_integration(self):
+        url = reverse('pagos:pagos_ingreso')
+        print(resolve(url))
+        self.assertEquals(resolve(url).func,ingreso_view)
+        newPago = Pago()
+        User = 'testUser'
+        User2 = 'testUser2'
+        newEliminacionPagos = EliminacionPagos()
+        newEliminacionPagos.pago = newPago
+        newEliminacionPagos.respuesta = models.IntegerField(default=None, null=True)
+        newEliminacionPagos.fechaSolicitud = models.DateTimeField(auto_now_add=True)
+        newEliminacionPagos.fechaRespuesta = models.DateTimeField(null=True, default=None)
+        self.assertEquals(str(type(newEliminacionPagos)),"<class 'pagos.models.EliminacionPagos'>")
 
