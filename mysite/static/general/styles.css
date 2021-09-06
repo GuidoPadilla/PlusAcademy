@@ -131,3 +131,35 @@ td, th {
   background-color: rgb(83, 189, 212);
 }
 
+.input-form
+{
+  background-color: #41bfca40;
+  border: #c0ca4f;
+  border-right-width: 0;
+  border-top-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 10%;
+  border-style: double;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-top: 2%;
+  padding-bottom: 1%;
+}
+
+.input-form input
+{
+  color: #000;
+  border-style: solid;
+  background-color: white;
+}
+
+.input-form  .btn-buscar
+{
+  background-color: #41bfca;
+  min-width: 30%;
+}
+.input-form  .btn-buscar:hover
+{
+  background-color: #1743473b;
+  min-width: 31%;
+}
