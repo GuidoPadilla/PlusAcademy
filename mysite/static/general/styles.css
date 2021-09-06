@@ -39,10 +39,8 @@ ul {
   margin-left: auto;
   margin-right: auto;
   display: flex;
-  background-color: #fff;
-  border-radius: 20px;
-  border: 2px solid black;
   flex-direction: column;
+  width: 50%;
 }
 
 .form-title {
@@ -59,11 +57,12 @@ input[type=text], input[type=email], input[type=number], input[type=password], s
   border: 1px solid black;
   border-radius: 4px;
   box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
 }
 
 input[type=text]:focus, input[type=email]:focus, input[type=number]:focus, input[type=password]:focus, select:focus {
   outline: none;
-  border-width: 2px;
+  background-color: rgb(236, 236, 236);
 }
 
 input::-webkit-outer-spin-button,
@@ -126,5 +125,9 @@ td, th {
   display: flex;
   gap: 30px;
   align-items: center;
+}
+
+.page-link, .page-item {
+  background-color: rgb(83, 189, 212);
 }
 

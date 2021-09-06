@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bzisbyjo',
+        'USER': 'bzisbyjo',
+        'PASSWORD': 'F1PYS0pIzD2gYi5yW-0Ojz5DQwUahjg1',
+        'HOST': 'chunee.db.elephantsql.com',   # Or an IP Address that your DB is hosted on
+        'PORT': '5432',
     }
 }
 

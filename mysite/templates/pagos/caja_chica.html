@@ -32,8 +32,41 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-
         </table>
+        <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document" style="min-width: 60%; width:60%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Solicitar Eliminación del Pago</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="pago_details" class="table table-bordered" style="margin: 0 auto">
+                                        <thead>
+                                        <tr>
+                                                <th>Codigo Estudiante</th>
+                                                <th>Codigo Curso</th>
+                                                <th>Tipo de Pago</th>
+                                                <th>Forma de Pago</th>
+                                                <th>Fecha</th>
+                                                <th>Tipo de Moneda</th>
+                                                <th>Monto</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn-solicitar-eliminacion" id="btn-solicitar-eliminacion">Solicitar Eliminación</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         <!-- Modal HTML -->
         <div id="modalConfirmation" class="modal fade">
             <div class="modal-dialog modal-confirm">
@@ -45,26 +78,8 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body text-center">
-                        <h4>Confirmado!</h4>	
-                        <p>Has confirmado la eliminación del pago</p>
-                        <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal HTML -->
-        <div id="modalRejection" class="modal fade">
-            <div class="modal-dialog modal-confirm">
-                <div class="modal-content">
-                    <div class="modal-header2 justify-content-center">
-                        <div class="icon-box">
-                            <i class="fa fa-check"></i>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <h4>Rechazado!</h4>	
-                        <p>Has rechazado la solicitud de eliminacion del pago</p>
+                        <h4>Exito!</h4>	
+                        <p>Has solicitado la eliminacion del pago</p>
                         <button class="btn btn-success" data-dismiss="modal"><span>Cerrar</span> <i class="fa fa-arrow-right"></i></button>
                     </div>
                 </div>
@@ -119,26 +134,27 @@
     )
 
     $(document).ready(() => {
-        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2}
-        let numberFormat = new Intl.NumberFormat('en-US', formatOptions)
+        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2};
+        let numberFormat = new Intl.NumberFormat('en-US', formatOptions);
         let table = $('#data_table').DataTable({
             ajax: {
-                    url: '/pagos/pagos_pendientes/',
+                    url: '/pagos/pagos/',
                     type: 'POST',
                     dataType: 'json',
                     data: {
                         content: 'xxx',
                         csrfmiddlewaretoken: '{{ csrf_token }}',
-                        action: 'listaPagos',
+                        action: 'cajaChica',
+                        // params: 'asdfasdf',
                     },
                     dataSrc: 'data'
                 },
+                scrollY: '70vh',
+                scrollCollapse: true,
                 "sDom":"Bfrtip",
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                scrollY: '70vh',
-                scrollCollapse: true,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
                 },
@@ -156,7 +172,7 @@
                     {
                         data: null,
                         orderable: false,
-                        defaultContent: '<button id="btn1" class="btn"><i class="fa fa-ban"></i> Rechazar Eliminación</button><button class="btn" id="btn2"><i class="fa fa-check"></i> Aceptar Eliminación</button>',
+                        defaultContent: '<button class="btn-solicitar-eliminacion"><i class="fa fa-trash"></i> Solicitar Eliminación</button>',
                      },
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
@@ -244,56 +260,79 @@
             table.draw();
         })
 
-        $('#data_table').on('click', '#btn1', function() {
+        // Solicitar Eliminacion de Pago
+        $('#data_table').on('click', '.btn-solicitar-eliminacion', function () {
             var data = table.row( $(this).parents('tr') ).data();
-            var dataSent = {
-                'pago_id': data.id
-            }
-            $.ajax({
-                url: '../solicitud_eliminacion_pago/',
-                type: "POST",
-                dataType: "json",
-                data: {
-                    content: "xxx",
-                    csrfmiddlewaretoken: "{{ csrf_token }}",
-                    action: 'rechazarSolicitudEliminacionPago',
-                    'pagos_data': JSON.stringify(dataSent)
-                },
-                success: (response) => {
-                    $('#modalRejection').modal('show')
-                    $('#data_table').DataTable().ajax.reload();
-                },
-                error: (response) => {
-                    console.log(response)
+            var list = [
+                {
+                    user: data.user,
+                    codigo_curso: data.codigo_curso,
+                    tipo_pago: data.tipo_pago,
+                    forma_pago: data.forma_pago,
+                    fecha_pago: data.fecha_pago,
+                    tipo_moneda: data.moneda,
+                    monto: data.cantidad
                 }
+            ]
+            var pago_details_table = $('table#pago_details').DataTable({
+                "sDom": "frt",
+                "searching": false,
+                "paging": false,
+                "ordering": false,
+                "retrieve": true,
+                "data": list,
+                "columns": [
+                  { data: 'user' },
+                  { data: 'fecha_pago' },
+                  { data: 'codigo_curso' },
+                  { data: 'tipo_pago' },
+                  { data: 'forma_pago' },
+                  { data: 'tipo_moneda' },
+                  { data: 'monto' },
+                ],
+                columnDefs: [ 
+                    {
+                        targets: 6,
+                        render: $.fn.dataTable.render.number(',', '.', 2, '')
+                    },
+                ],
             })
-        })
-        $('#data_table').on('click', '#btn2', function() {
-            var data = table.row( $(this).parents('tr') ).data();
-            console.log(data)
-            var dataSent = {
-                'pago_id': data.id
-            }
-            $.ajax({
-                url: '../solicitud_eliminacion_pago/',
-                type: "POST",
-                dataType: "json",
-                data: {
-                    content: "xxx",
-                    csrfmiddlewaretoken: "{{ csrf_token }}",
-                    action: 'aceptarSolicitudEliminacionPago',
-                    'pagos_data': JSON.stringify(dataSent)
-                },
-                success: (response) => {
-                    $('#modalConfirmation').modal('show')
-                    $('#data_table').DataTable().ajax.reload();
-                },
-                error: (response) => {
-                    console.log(response)
+            pago_details_table.clear();
+                for (var k = 0; k < list.length; k++){
+                    pago_details_table.row.add(list[k]);      
                 }
+            pago_details_table.draw();
+            $('#myModal').modal('show');
+
+
+            $('#btn-solicitar-eliminacion').unbind().on('click', function() {
+                var dataSent = {
+                    'pago_id': data.id
+                }
+                $.ajax({
+                    url: '../solicitar_eliminacion/',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        content: "xxx",
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        action: 'pagoEliminacion',
+                        'pagos_data': JSON.stringify(dataSent)
+                    },
+                    success: (response) => {
+                        $('#modalConfirmation').modal('show')
+                        $('#myModal').modal('hide')
+                        $('#data_table').DataTable().ajax.reload();
+                    },
+                    error: (response) => {
+                        console.log(response)
+                    }
+                })
             })
         })
     })
+
+
 </script>
 {% endblock content %}
 
