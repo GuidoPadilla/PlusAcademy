@@ -6,6 +6,23 @@ from django.conf import settings
 from datetime import datetime
 
 # Create your models here.
+
+class TipoGasto(models.Model): 
+    nombre = models.CharField(unique=True, max_length=50)
+
+    def __str__(self):
+        return self.nombre
+
+class Gasto(models.Model):
+    fecha_gasto = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tipo_gasto = models.ForeignKey(TipoGasto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    #1 = Activo
+    #0 = Eliminado
+    #2 = En proceso de revision
+    status = models.IntegerField(default = 1)
+
 class TipoPago(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
     def __str__(self):

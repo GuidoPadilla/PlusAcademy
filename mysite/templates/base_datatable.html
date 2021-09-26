@@ -45,6 +45,13 @@
                 </div>
             </div>
             <div class="dropdown navbar-item">
+                <li class="dropbtn item-title">Gastos</li>
+                <div class="dropdown-content">
+                    <a class="navbar-a" href="{% url 'pagos:ingreso_gasto' %}">Ingreso Gasto</a>
+                    <a class="navbar-a" href="{% url 'pagos:ingreso_tipo_gasto' %}">Ingreso Tipo de Gasto</a>
+                </div>
+            </div>
+            <div class="dropdown navbar-item">
                 <li class="dropbtn item-title">Usuarios</li>
                 <div class="dropdown-content">
                     <a class="navbar-a" href="{% url 'usuarios:usuarios_listado' %}">Listado</a>

@@ -3,7 +3,7 @@ from django.forms import ModelForm, Form
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
-from pagos.models import Pago, Cobro, TipoPago
+from pagos.models import Pago, Cobro, TipoPago, TipoGasto, Gasto
 from usuarios.models import Moneda, Curso
 
 
@@ -16,8 +16,19 @@ class PaymentRegisterForm(ModelForm):
         super(PaymentRegisterForm, self).__init__(*args, **kwrgs)
         self.fields['user'].queryset = User.objects.filter(userextra__rol__nombre='estudiante')
 
+class TipoGastoForm(ModelForm):
+    class Meta:
+        model = TipoGasto
+        fields = ['nombre']
 
+class GastoForm(ModelForm):
+    class Meta:
+        model = Gasto
+        fields = ['tipo_gasto', 'cantidad']
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class CobroExtraForm(Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())

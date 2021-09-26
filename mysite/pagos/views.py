@@ -7,11 +7,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Cobro, Pago, EliminacionPagos, TipoPago
+from .models import Cobro, Pago, EliminacionPagos, TipoPago, TipoGasto, Gasto
 from usuarios.models import LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm
+from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm
 from django.core.serializers import serialize
 import json
 
@@ -34,7 +34,35 @@ def pagos(request):
             return JsonResponse({"data":[x.toDict() for x in pagos]}, safe=False)
         elif action == 'cajaChica':
             pagos = Pago.objects.filter(status=1, forma_pago__nombre='Efectivo')
-            return JsonResponse({"data":[x.toDict() for x in pagos]})
+            lista = []
+            for pago in pagos:
+                item = {
+                    'id': pago.id, 
+                    'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'), 
+                    'user': pago.user.username,
+                    'codigo_curso': pago.codigo_curso.nombre,
+                    'forma_pago': 'Efectivo',
+                    'tipo_pago': pago.cobro.tipo_pago.nombre,
+                    'moneda': pago.moneda.nombre,
+                    'cantidad': pago.cantidad,
+                    'tipo': 'Pagos',
+                    }
+                lista.append(item)
+            gastos = Gasto.objects.filter(status=1)
+            for gasto in gastos:
+                item = {
+                    'id': gasto.id, 
+                    'fecha_pago': gasto.fecha_gasto.strftime('%d/%m/%Y'), 
+                    'user': gasto.user.username,
+                    'codigo_curso': '',
+                    'forma_pago': 'Efectivo',
+                    'tipo_pago': gasto.tipo_gasto.nombre,
+                    'moneda': 'Quetzal',
+                    'cantidad': gasto.cantidad,
+                    'tipo': 'Gastos',
+                    }
+                lista.append(item)
+            return JsonResponse({"data": lista})
         #     if params:
         #         parametros = params.split(',')
         #         # print(parametros)
@@ -287,6 +315,7 @@ def saldos(request):
                                 'cantidad': 50,
                                 'codigo': cobro.user.username,
                                 'curso': cursoLlevado.curso.codigo})
+            print(lista)
             return JsonResponse({"data":lista}, safe=False)
         else:
             response_data = {}
@@ -352,5 +381,38 @@ def cobros_extra_a_curso(request):
             form_cobros_extra = CobroExtraCursoForm()
         context = {'form_cobros_extra': form_cobros_extra}
         return render(request, 'pagos/cobros_extra.html', context)
+    else:
+        return HttpResponseRedirect('../pagos/login/')
+
+def ingreso_tipo_gasto(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = TipoGastoForm(request.POST)
+            if form.is_valid():
+                TipoGasto.objects.create(**form.cleaned_data)
+                return HttpResponseRedirect('')
+            else:
+                form = TipoGastoForm()
+        else:
+            form = TipoGastoForm()
+        context = {'form': form}
+        return render(request, 'pagos/ingreso_tipo_gasto.html', context)
+    else:
+        return HttpResponseRedirect('../pagos/login/')
+
+def ingreso_gasto(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = GastoForm(request.POST)
+            if form.is_valid():
+                user = request.user
+                Gasto.objects.create(**form.cleaned_data, user_id=user.id)
+                return HttpResponseRedirect('')
+            else:
+                form = GastoForm()
+        else:
+            form = GastoForm()
+        context = {'form': form}
+        return render(request, 'pagos/ingreso_gasto.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')

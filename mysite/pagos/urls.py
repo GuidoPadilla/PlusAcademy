@@ -21,4 +21,6 @@ urlpatterns = [
     path('pagos_eliminados_list/', views.pagos_eliminados_list, name='pagos_eliminados_list'),
     path('cobros_extra/', views.cobros_extra_view, name='cobros_extra'),
     path('cobros_extra_curso/', views.cobros_extra_a_curso, name='cobros_extra_a_curso'),
+    path('ingreso_tipo_gasto/', views.ingreso_tipo_gasto, name='ingreso_tipo_gasto'),
+    path('ingreso_gasto/', views.ingreso_gasto, name='ingreso_gasto'),
 ]

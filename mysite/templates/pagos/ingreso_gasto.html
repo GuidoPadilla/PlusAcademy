@@ -1,0 +1,15 @@
+{% extends 'base_datatable.html' %}
+
+{% block content %}
+
+<div class="container">
+	<form action="" method="post">
+		<h4 class="form-title">Ingresar Gasto</h4>
+				{% csrf_token %}
+				{{form}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Ingresar Gasto">
+		</div>
+	</form>
+</div>
+{% endblock content %}
