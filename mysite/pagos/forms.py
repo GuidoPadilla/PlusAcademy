@@ -50,8 +50,7 @@ class CobroExtraCursoForm(Form):
     monto = forms.FloatField()
     tipo_pago = forms.ModelChoiceField(queryset=TipoPago.objects.all())
     tipo_moneda = forms.ModelChoiceField(queryset=Moneda.objects.all())
-    class Meta:
-        model = Cobro
+
         
 
     def __init__(self, *args, **kwrgs):

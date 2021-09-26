@@ -53,6 +53,7 @@
   transition: all 0.3s ease-in-out;
 }
 
+
 .dropdown-content a:hover {
   /* background-color: #f1f1f1; */
   color:rgb(83, 189, 212);
@@ -88,6 +89,7 @@
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+  opacity: 0.5; /*prevents username from obstructing data and UI elements shown on screen*/
 
 }
 

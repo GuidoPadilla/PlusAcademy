@@ -2,14 +2,14 @@
     <link rel="stylesheet" type="text/css" href="../../../static/general/styles.css" />
 </head>
 
-{% extends 'base.html' %}
+{% extends 'base_datatable.html' %}
 
 {% block content %}
 <!-- <h1>Crear Curso</h1>
 <hr> -->
 
 <div class="container">
-	<form action="" method="post">
+	<form action="" method="post" class="input-form">
 		<h4 class="form-title">Crear Curso</h4>
 				{% csrf_token %}
 				{{form1}}
