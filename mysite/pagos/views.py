@@ -21,6 +21,51 @@ def control_view(request):
 
 def caja_chica_view(request):
     return render(request, 'pagos/caja_chica.html')
+    
+def pivote_view(request):
+    return render(request, 'pagos/pivote.html')
+
+def pivote(request):
+    if request.is_ajax() and request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'pivote':
+            pagos = Pago.objects.filter(status=1)
+            lista = []
+            for pago in pagos:
+                item = {
+                    'id': pago.id, 
+                    'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'), 
+                    'user': pago.user.username,
+                    'names': pago.user.first_name+' ' + pago.user.last_name,
+                    'codigo_curso': pago.codigo_curso.nombre,
+                    'forma_pago': pago.forma_pago.nombre,
+                    'tipo_pago': pago.cobro.tipo_pago.nombre,
+                    'moneda': pago.moneda.nombre,
+                    'cantidad': pago.cantidad,
+                    'tipo': 'Pago',
+                    }
+                lista.append(item)
+            gastos = Gasto.objects.filter(status=1)
+            for gasto in gastos:
+                item = {
+                    'id': gasto.id, 
+                    'fecha_pago': gasto.fecha_gasto.strftime('%d/%m/%Y'), 
+                    'names': gasto.user.first_name+' ' + gasto.user.last_name,
+                    'user': gasto.user.username,
+                    'codigo_curso': '',
+                    'forma_pago': 'Efectivo',
+                    'tipo_pago': gasto.tipo_gasto.nombre,
+                    'moneda': 'Quetzal',
+                    'cantidad': gasto.cantidad,
+                    'tipo': 'Gasto',
+                    }
+                lista.append(item)
+            return JsonResponse({"data": lista}, safe=False)
+    else:
+        response_data = {}
+        response_data['result'] = 'ERROR'
+        response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
+        return HttpResponse(serialize('json', response_data), content_type='application/json')
 
 def saldo_view(request):
     return render(request, 'pagos/saldo_consulta.html')

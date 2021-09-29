@@ -1,0 +1,250 @@
+{% extends 'base_datatable.html' %}
+
+{% block content %}
+{% csrf_token %}
+<div style="width:90%; margin: 0 auto;">
+    <div>
+        <div class="row justify-content-center">
+            <div class="col">
+                <label for="dt1">Fecha de inicio:</label>
+                <input type="text" id="dt1"></input>
+            </div>
+            <div  class="col">
+                <label for="dt2">Fecha final:</label>
+                <input type="text" id="dt2"></input>
+            </div>
+            <div  class="col">
+                <label for="user_code">Codigo de Usuario:</label>
+                <input type="text" id="user_code">
+            </div>
+        </div>
+        <table id="data_table" class="table table-bordered table-hover" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Fecha Pago/Gasto</th>
+                    <th>Codigo De Usuario</th>
+                    <th>Nombres</th>
+                    <th>Codigo De Curso</th>
+                    <th>Tipo de Pago/Gasto</th>
+                    <th>Forma de Pago/Gasto</th>
+                    <th>Tipo de Moneda</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+    // FILTRO DE RANGO DE FECHAS - SE LLAMA CADA VEZ QUE UNO DE LOS DOS DATEPICKERS CAMBIE
+    minDateFilter = "";
+    maxDateFilter = "";
+
+    $.fn.dataTableExt.afnFiltering.push(
+        (settings, data, dataIndex) => {
+
+            let mydate
+            if (typeof data._date == 'undefined') {
+
+                var parts = data[1].split('/')
+                mydate = new Date(parts[2], parts[1] - 1, parts[0]); 
+            }
+
+            if (minDateFilter && !isNaN(minDateFilter)) {
+                if (mydate < minDateFilter) {
+                    return false;
+                }
+            }
+
+            if (maxDateFilter && !isNaN(maxDateFilter)) {
+                if (mydate > maxDateFilter) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    )
+
+
+    // FILTRO DE CODIGO DE USUARIO - SE LLAMA CADA VEZ QUE CAMBIE EL INPUT
+    $.fn.dataTable.ext.search.push(
+        ( settings, data, dataIndex ) => {
+            const code = $('#user_code').val()
+            const codeColumn = data[2]
+            if ( codeColumn.includes(code) || code === '')
+            {
+                return true
+            }
+            return false
+        }
+    )
+
+    $(document).ready(() => {
+        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2};
+        let numberFormat = new Intl.NumberFormat('en-US', formatOptions);
+        let today = new Date()
+        let dd = today.getDate()
+        let mm = today.getMonth()+1;
+        let yyyy = today.getFullYear()
+        if(dd<10) 
+        {
+            dd='0'+dd
+        } 
+
+        if(mm<10) 
+        {
+            mm='0'+mm
+        } 
+        today = 'pivote_'+dd+'_'+mm+'_'+yyyy
+        let table = $('#data_table').DataTable({
+            ajax: {
+                    url: '/pagos/pivote/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        content: 'xxx',
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        action: 'pivote',
+                    },
+                    dataSrc: 'data'
+                },
+                scrollY: '70vh',
+                scrollCollapse: true,
+                "sDom":"Bfrtip",
+                buttons: [
+                    {
+                        extend: 'copy',
+                        filename: today,
+                    },
+                    {
+                        extend: 'csv',
+                        filename: today,
+                    },
+                    {
+                        extend: 'excel',
+                        filename: today,
+                    },
+                    {
+                        extend: 'pdf',
+                        filename: today,
+                    },
+                    {
+                        extend: 'print',
+                        filename: today,
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+                },
+                orderCellsTop: true,
+                fixedHeader: true,
+                columns: [
+                    { data: 'tipo' },
+                    { data: 'fecha_pago' },
+                    { data: 'user' },
+                    { data: 'names' },
+                    { data: 'codigo_curso' },
+                    { data: 'tipo_pago' },
+                    { data: 'forma_pago' },
+                    { data: 'moneda' },
+                    { data: 'cantidad' },
+                ],
+                /* order: [[2, 'asc'], [4, 'asc']],
+                rowGroup: {
+                    dataSrc: ['tipo'],
+                    endRender: ( rows, group, index ) => {
+                        let totalPago = rows
+                        .data()
+                        .pluck('cantidad')
+                        .reduce((a, b) => {
+                            return a + b*1
+                        }, 0)
+                        let totalGastos = rows
+                        .data()
+                        .reduce((a, b) => {
+                            return a + ((b.tipo === 'Gastos') ? b.cantidad : 0)
+                        }, 0)
+                        let totalPagos = rows
+                        .data()
+                        .reduce((a, b) => {
+                            return a + ((b.tipo === 'Pagos') ? b.cantidad : 0)
+                        }, 0)
+                        return $('<tr/>')
+                        .append( `<td colspan="6" style="background-color: rgb(116, 186, 255); padding-left: 1.5em;" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'SubTotal:': ''}</td>` )
+                        .append( `<td style="background-color: rgb(116, 186, 255);">Q${numberFormat.format(totalPago)}</td>` )
+
+                    },
+                }, */
+                columnDefs: [ 
+                    //{ targets: [0], visible: false },
+                    /* { searchable: false, targets: 5 }, */
+                    {
+                        targets: 8,
+                        render: $.fn.dataTable.render.number(',', '.', 2, '')
+                    },
+                ],
+                rowId: 'id'
+        })
+        $("#dt1").datepicker({
+            dateFormat: "dd/mm/yy",
+            // minDate: 0,
+            onSelect: function (date) {
+                var dt2 = $('#dt2');
+                var startDate = $(this).datepicker('getDate');
+                //add 30 days to selected date
+                startDate.setDate(startDate.getDate() + 30);
+                var minDate = $(this).datepicker('getDate');
+                var dt2Date = dt2.datepicker('getDate');
+                //difference in days. 86400 seconds in day, 1000 ms in second
+                var dateDiff = (dt2Date - minDate)/(86400 * 1000);
+
+                //dt2 not set or dt1 date is greater than dt2 date
+                if (dt2Date == null || dateDiff < 0) {
+                        dt2.datepicker('setDate', minDate);
+                }
+                //dt1 date is 30 days under dt2 date
+                else if (dateDiff > 30){
+                        dt2.datepicker('setDate', startDate);
+                }
+                //sets dt2 maxDate to the last day of 30 days window
+                // dt2.datepicker('option', 'maxDate', startDate);
+                dt2.datepicker('option', 'minDate', minDate);
+
+                minDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            minDateFilter = $(this).datepicker('getDate');
+            table.draw();
+        });
+
+        // FORMATO DE DATEPICKER 2
+        
+        $('#dt2').datepicker({
+            dateFormat: "dd/mm/yy",
+            onSelect: function(date){
+                maxDateFilter = $(this).datepicker('getDate');
+                table.draw();
+            }
+        }).keyup(function() {
+            maxDateFilter = $(this).datepicker('getDate');
+            table.draw();
+        });
+
+
+        // FUNCIONES QUE REPINTAN LA TABLA CADA VEZ QUE LOS FILTROS CAMBIAN
+
+        $('#dt1, #dt2').change( () => {
+            table.draw();
+        })
+        $('#user_code').keyup( () => {
+            table.draw();
+        })
+    })
+
+
+</script>
+{% endblock content %}
+

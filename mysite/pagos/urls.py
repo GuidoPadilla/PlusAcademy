@@ -9,6 +9,7 @@ urlpatterns = [
     path('saldo_consulta/', views.saldo_view, name='pagos_saldo'),
     path('ingreso/', views.ingreso_view, name='pagos_ingreso'),
     path('pagos/', views.pagos, name='lista_pagos'),
+    path('pivote/', views.pivote, name='pivote'),
     path('cobros_estudiante/', views.cobros_estudiante, name='lista_cobro_estudiante'),
     path('moneda_estudiante/', views.moneda_estudiante, name='lista_moneda_estudiante'),
     path('saldos/', views.saldos, name='lista_saldos'),
@@ -23,4 +24,5 @@ urlpatterns = [
     path('cobros_extra_curso/', views.cobros_extra_a_curso, name='cobros_extra_a_curso'),
     path('ingreso_tipo_gasto/', views.ingreso_tipo_gasto, name='ingreso_tipo_gasto'),
     path('ingreso_gasto/', views.ingreso_gasto, name='ingreso_gasto'),
+    path('pantalla_pivote/', views.pivote_view, name='pantalla_pivote'),
 ]
