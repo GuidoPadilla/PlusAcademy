@@ -30,6 +30,7 @@
                     <th>Tipo de Moneda</th>
                     <th>Monto</th>
                     <th>Acciones</th>
+                    <th>Descripcion de Estudiante</th>
                 </tr>
             </thead>
         </table>
@@ -134,8 +135,22 @@
     )
 
     $(document).ready(() => {
-        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2};
-        let numberFormat = new Intl.NumberFormat('en-US', formatOptions);
+        let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2}
+        let numberFormat = new Intl.NumberFormat('en-US', formatOptions)
+        let today = new Date()
+        let dd = today.getDate()
+        let mm = today.getMonth()+1;
+        let yyyy = today.getFullYear()
+        if(dd<10) 
+        {
+            dd='0'+dd
+        } 
+
+        if(mm<10) 
+        {
+            mm='0'+mm
+        } 
+        today = 'pagos_'+dd+'_'+mm+'_'+yyyy
         let table = $('#data_table').DataTable({
             ajax: {
                     url: '/pagos/pagos/',
@@ -153,7 +168,26 @@
                 scrollCollapse: true,
                 "sDom":"Bfrtip",
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
+                    {
+                        extend: 'copy',
+                        filename: today,
+                    },
+                    {
+                        extend: 'csv',
+                        filename: today,
+                    },
+                    {
+                        extend: 'excel',
+                        filename: today,
+                    },
+                    {
+                        extend: 'pdf',
+                        filename: today,
+                    },
+                    {
+                        extend: 'print',
+                        filename: today,
+                    }
                 ],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
@@ -173,7 +207,8 @@
                         data: null,
                         orderable: false,
                         defaultContent: '<button class="btn-solicitar-eliminacion"><i class="fa fa-trash"></i> Solicitar Eliminación</button>',
-                     },
+                    },
+                    { data: 'userInfo' },
                 ],
                 order: [[2, 'asc'], [4, 'asc']],
                 rowGroup: {
@@ -192,7 +227,7 @@
                     },
                 },
                 columnDefs: [ 
-                    { targets: [0, 2], visible: false },
+                    { targets: [0, 2, 9], visible: false },
                     { searchable: false, targets: 5 },
                     {
                         targets: 7,

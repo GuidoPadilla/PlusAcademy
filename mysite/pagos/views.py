@@ -315,7 +315,6 @@ def saldos(request):
                                 'cantidad': 50,
                                 'codigo': cobro.user.username,
                                 'curso': cursoLlevado.curso.codigo})
-            print(lista)
             return JsonResponse({"data":lista}, safe=False)
         else:
             response_data = {}

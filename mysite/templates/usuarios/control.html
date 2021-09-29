@@ -99,6 +99,20 @@
     )
 
     $(document).ready(() => {
+        let today = new Date()
+        let dd = today.getDate()
+        let mm = today.getMonth()+1;
+        let yyyy = today.getFullYear()
+        if(dd<10) 
+        {
+            dd='0'+dd
+        } 
+
+        if(mm<10) 
+        {
+            mm='0'+mm
+        } 
+        today = 'estudiantes_'+dd+'_'+mm+'_'+yyyy
         let table = $('#table_user').DataTable({
             ajax: {
                     url: '/usuarios/usuarios/',
@@ -112,7 +126,26 @@
                 },
                 "sDom":"Bfrtip",
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
+                    {
+                        extend: 'copy',
+                        filename: today,
+                    },
+                    {
+                        extend: 'csv',
+                        filename: today,
+                    },
+                    {
+                        extend: 'excel',
+                        filename: today,
+                    },
+                    {
+                        extend: 'pdf',
+                        filename: today,
+                    },
+                    {
+                        extend: 'print',
+                        filename: today,
+                    }
                 ],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'

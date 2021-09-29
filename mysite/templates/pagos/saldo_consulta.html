@@ -82,6 +82,20 @@
     $(document).ready(() => {
         let formatOptions = {style: 'decimal', minimumFractionDigits: 2, minimumFractionDigits: 2};
         let numberFormat = new Intl.NumberFormat('en-US', formatOptions);
+        let today = new Date()
+        let dd = today.getDate()
+        let mm = today.getMonth()+1;
+        let yyyy = today.getFullYear()
+        if(dd<10) 
+        {
+            dd='0'+dd
+        } 
+
+        if(mm<10) 
+        {
+            mm='0'+mm
+        } 
+        today = 'saldos_'+dd+'_'+mm+'_'+yyyy
         let table = $('#data_table').DataTable({
             ajax: {
                     url: '/pagos/saldos/',
@@ -96,7 +110,26 @@
                 },
                 "sDom":"Bfrtip",
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
+                    {
+                        extend: 'copy',
+                        filename: today,
+                    },
+                    {
+                        extend: 'csv',
+                        filename: today,
+                    },
+                    {
+                        extend: 'excel',
+                        filename: today,
+                    },
+                    {
+                        extend: 'pdf',
+                        filename: today,
+                    },
+                    {
+                        extend: 'print',
+                        filename: today,
+                    }
                 ],
                 scrollY: '70vh',
                 scrollCollapse: true,
