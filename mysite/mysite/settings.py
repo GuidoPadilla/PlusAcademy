@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # 'django.templatetags.static',
     'usuarios',
     'pagos',
-    #'behave_django',
+    'behave_django',
 ]
 
 MIDDLEWARE = [
