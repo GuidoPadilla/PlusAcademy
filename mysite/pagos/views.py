@@ -90,7 +90,7 @@ def pagos(request):
                     'tipo_pago': pago.cobro.tipo_pago.nombre,
                     'moneda': pago.moneda.nombre,
                     'cantidad': pago.cantidad,
-                    'tipo': 'Pagos',
+                    'tipo': 'Ingresos',
                     }
                 lista.append(item)
             gastos = Gasto.objects.filter(status=1)
@@ -378,10 +378,18 @@ def ingreso_view(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = PaymentRegisterForm(request.POST)
-            cobro = Cobro.objects.filter(id = request.POST.get('cobro'))
-            if form.is_valid():
-                Pago.objects.create(**form.cleaned_data)
-                return HttpResponseRedirect('')
+            cobro = Cobro.objects.get(id = request.POST.get('cobro'))
+            pagos_estudiante = Pago.objects.filter(user = request.POST.get('user')).filter(status=1)
+            pagos_cobro = (pagos_estudiante.filter(cobro = cobro).aggregate(Sum('cantidad'))['cantidad__sum'] or 0) + float(request.POST.get('cantidad'))
+            if cobro.monto < pagos_cobro:
+                context = {'form': form, "message":"Esta realizando un pago que excede el monto del cobro"}
+                return render(request, 'pagos/ingresar.html', context)
+            else:
+                if form.is_valid():
+                    Pago.objects.create(**form.cleaned_data)
+                    form = PaymentRegisterForm()
+                    context = {'form': form, "message":"Pago Completado"}
+                    return render(request, 'pagos/ingresar.html', context)
         else:
             form = PaymentRegisterForm()
         context = {'form': form}

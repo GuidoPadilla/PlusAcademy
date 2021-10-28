@@ -13,10 +13,59 @@
 	</form>
 </div>
 <script type="text/javascript">
+	if ('{{ message }}' != '') {
+		alert('{{ message }}')
+	}
 	$(document).ready(() => {
 		$('#id_cobro').html('<option value="">---------</option>')
+		if ($('#id_user option:selected').text() != '---------') {
+			$.ajax({
+					url: '/pagos/cobros_estudiante/',
+					type: "POST",
+					dataType: "json",
+					data: {
+						content: "xxx",
+						csrfmiddlewaretoken: "{{ csrf_token }}",
+						user: $('#id_user option:selected').text()
+					},
+					success: (response) => {
+						$('#id_cobro').html('')
+						$('#id_cobro').append('<option value="">---------</option>')
+						response.data.forEach(element => {
+							$('#id_cobro').append(`<option value=${element.id}>${element.tipo_pago} ${element.fecha_cobro} ${element.monto}</option>`)
+						})
+					},
+					error: (response) => {
+						console.log(response)
+					}
+				})
+				$.ajax({
+					url: '/pagos/moneda_estudiante/',
+					type: "POST",
+					dataType: "json",
+					data: {
+						content: "xxx",
+						csrfmiddlewaretoken: "{{ csrf_token }}",
+						user: $('#id_user option:selected').text()
+					},
+					success: (response) => {
+						$('#id_moneda').html('')
+						$('#id_moneda').append('<option value="">---------</option>')
+						response.data.forEach(element => {
+							$('#id_moneda').append(`<option value=${element.id}>${element.nombre}</option>`)
+						})
+					},
+					error: (response) => {
+						console.log(response)
+					}
+				})
+		}
 		$(document).on('change','#id_user',function() {
 			if ($('#id_user option:selected').text() != '---------') {
+				$('#id_cobro').html('')
+				$('#id_cobro').append('<option value="">---------</option>')
+				$('#id_moneda').html('')
+				$('#id_moneda').append('<option value="">---------</option>')
 				$.ajax({
 					url: '/pagos/cobros_estudiante/',
 					type: "POST",

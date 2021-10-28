@@ -209,7 +209,7 @@
                     //     defaultContent: '<button class="btn-solicitar-eliminacion"><i class="fa fa-trash"></i> Solicitar Eliminación</button>',
                     //  },
                 ],
-                order: [[2, 'asc'], [4, 'asc']],
+                order: [[0, 'asc']],
                 rowGroup: {
                     dataSrc: ['tipo'],
                     endRender: ( rows, group, index ) => {
@@ -227,7 +227,7 @@
                         let totalPagos = rows
                         .data()
                         .reduce((a, b) => {
-                            return a + ((b.tipo === 'Pagos') ? b.cantidad : 0)
+                            return a + ((b.tipo === 'Ingresos') ? b.cantidad : 0)
                         }, 0)
                         return $('<tr/>')
                         .append( `<td colspan="6" style="background-color: rgb(116, 186, 255); padding-left: 1.5em;" class=${index%2===0 ? "tot" : "sub"}>${index%2===0 ?  'SubTotal:': ''}</td>` )
