@@ -293,6 +293,7 @@ def saldos(request):
                 pagos_usuario = pagos_usuario.filter(moneda__nombre=moneda_usuario)
                 cobros = cobros.filter(user__username=cursoLlevado.user.username)
                 cobros = cobros.filter(tipo_moneda__nombre=moneda_usuario)
+                cobros = cobros.filter(codigo_curso__codigo=cursoLlevado.curso.codigo)
                 for cobro in cobros:
                     pagos_cobro = pagos_usuario.filter(cobro=cobro)
                     diferencia = cobro.monto - (pagos_cobro.aggregate(Sum('cantidad'))['cantidad__sum'] or 0)

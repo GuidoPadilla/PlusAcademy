@@ -60,8 +60,8 @@
 					}
 				})
 		}
-		$(document).on('change','#id_user',function() {
-			if ($('#id_user option:selected').text() != '---------') {
+		$(document).on('change','#id_cobro',function() {
+			if ($('#id_user option:selected').text() != '---------' && $('#id_codigo_curso option:selected').text() != '---------') {
 				$('#id_cobro').html('')
 				$('#id_cobro').append('<option value="">---------</option>')
 				$('#id_moneda').html('')

@@ -44,6 +44,7 @@ class Cobro(models.Model):
     tipo_pago = models.ForeignKey(TipoPago, on_delete=models.CASCADE)
     tipo_moneda = models.ForeignKey(Moneda, on_delete=models.CASCADE)
     relacionado = models.ForeignKey('self', on_delete=models.CASCADE, null=True, default=None)
+    codigo_curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
         return self.tipo_pago.nombre + ' ' + self.fecha_cobro.strftime('%d/%m/%Y')
@@ -54,7 +55,8 @@ class Cobro(models.Model):
         'fecha_cobro':self.fecha_cobro.strftime('%d/%m/%Y'),
         'monto': self.monto,
         'tipo_pago': self.tipo_pago.nombre,
-        'tipo_moneda': self.tipo_moneda.nombre
+        'tipo_moneda': self.tipo_moneda.nombre, 
+        'codigo_curso': self.codigo_curso.codigo
         }
         return retDict
 

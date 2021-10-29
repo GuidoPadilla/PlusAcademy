@@ -94,10 +94,10 @@ def view_createasignacion(request):
                 moneda = Moneda.objects.get(nombre = 'Quetzal') if user.userextra.nacionalidad.moneda.nombre == 'Quetzal' else Moneda.objects.get(nombre = 'Dolar')
                 duracion = curso.duracion
                 fecha_inscripcion = fecha_llevado + relativedelta(weeks=1)
-                Cobro.objects.create(user=user, fecha_cobro = fecha_inscripcion, monto = monto_inscripcion, tipo_pago = TipoPago.objects.get(nombre = 'Inscripcion'), tipo_moneda = moneda)
+                Cobro.objects.create(user=user, fecha_cobro = fecha_inscripcion, monto = monto_inscripcion, tipo_pago = TipoPago.objects.get(nombre = 'Inscripcion'), tipo_moneda = moneda, codigo_curso = Curso.objects.get(codigo = curso))
                 for i in range(duracion):
                     fecha_cuota  = fecha_llevado + relativedelta(months=i, weeks=1)
-                    Cobro.objects.create(user=user, fecha_cobro = fecha_cuota, monto = monto_cuota, tipo_pago = TipoPago.objects.get(nombre = 'Cuota'), tipo_moneda = moneda)
+                    Cobro.objects.create(user=user, fecha_cobro = fecha_cuota, monto = monto_cuota, tipo_pago = TipoPago.objects.get(nombre = 'Cuota'), tipo_moneda = moneda, codigo_curso = Curso.objects.get(codigo = curso))
                 LlevaCurso.objects.create(**form1.cleaned_data)
                 return HttpResponseRedirect('../asignar_curso/')
         else:
