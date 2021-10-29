@@ -404,7 +404,9 @@ def cobros_extra_view(request):
             form_cobros_extra = CobroExtraForm(request.POST)
             if form_cobros_extra.is_valid():
                 Cobro.objects.create(**form_cobros_extra.cleaned_data)
-                return HttpResponseRedirect('../cobros_extra/')
+                form_cobros_extra = CobroExtraForm()
+                context = {'form_cobros_extra': form_cobros_extra, "message": "Ingreso de cobros extra a usuario exitoso"}
+                return render(request, 'pagos/cobros_extra.html', context)
         else:
             form_cobros_extra = CobroExtraForm()
         context = {'form_cobros_extra': form_cobros_extra}
@@ -431,7 +433,9 @@ def cobros_extra_a_curso(request):
                         data['relacionado'] = None
                         Cobro.objects.create(**data)
                         
-                return HttpResponseRedirect('../cobros_extra/')
+                form_cobros_extra = CobroExtraCursoForm()
+                context = {'form_cobros_extra': form_cobros_extra, "message":"Ingreso de cobros extra a un curso exitoso"}
+                return render(request, 'pagos/cobros_extra.html', context)
         else:
             form_cobros_extra = CobroExtraCursoForm()
         context = {'form_cobros_extra': form_cobros_extra}
@@ -445,7 +449,9 @@ def ingreso_tipo_gasto(request):
             form = TipoGastoForm(request.POST)
             if form.is_valid():
                 TipoGasto.objects.create(**form.cleaned_data)
-                return HttpResponseRedirect('')
+                form = TipoGastoForm()
+                context = {'form': form, "message":"Ingreso de tipo de gasto exitoso"}
+                return render(request, 'pagos/ingreso_tipo_gasto.html', context)
             else:
                 form = TipoGastoForm()
         else:
@@ -462,7 +468,9 @@ def ingreso_gasto(request):
             if form.is_valid():
                 user = request.user
                 Gasto.objects.create(**form.cleaned_data, user_id=user.id)
-                return HttpResponseRedirect('')
+                form = GastoForm()
+                context = {'form': form, "message": "Ingreso de gasto exitoso"}
+                return render(request, 'pagos/ingreso_gasto.html', context)
             else:
                 form = GastoForm()
         else:

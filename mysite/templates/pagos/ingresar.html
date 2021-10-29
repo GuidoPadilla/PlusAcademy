@@ -13,9 +13,6 @@
 	</form>
 </div>
 <script type="text/javascript">
-	if ('{{ message }}' != '') {
-		alert('{{ message }}')
-	}
 	$(document).ready(() => {
 		$('#id_cobro').html('<option value="">---------</option>')
 		if ($('#id_user option:selected').text() != '---------') {

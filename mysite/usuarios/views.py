@@ -52,7 +52,10 @@ def view_createuser(request):
                     """ form1.cleaned_data['username'] = codigo """
                     new_user = User.objects.create_user(**form1.cleaned_data)
                     UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                    return HttpResponseRedirect('../control/')
+                    form1 = UserRegisterForm()
+                    form2 = UserExtraRegisterForm()
+                    context = {'form1': form1, 'form2': form2, "message":"Creación de usuario completado"}
+                    return render(request, 'usuarios/create_user.html', context)
 
         else:
             form1 = UserRegisterForm()
@@ -68,7 +71,8 @@ def view_creatcurso(request):
             form1 = CursoRegisterForm(request.POST)
             if form1.is_valid():
                 new_curso = Curso.objects.create(**form1.cleaned_data)
-                return HttpResponseRedirect('../create_curso/')
+                context = {'form1': form1, "message":"Creación de curso completado"}
+                return render(request, 'usuarios/create_curso.html', context)
         else:
             form1 = CursoRegisterForm()
         context = {'form1': form1}
@@ -99,7 +103,9 @@ def view_createasignacion(request):
                     fecha_cuota  = fecha_llevado + relativedelta(months=i, weeks=1)
                     Cobro.objects.create(user=user, fecha_cobro = fecha_cuota, monto = monto_cuota, tipo_pago = TipoPago.objects.get(nombre = 'Cuota'), tipo_moneda = moneda, codigo_curso = Curso.objects.get(codigo = curso))
                 LlevaCurso.objects.create(**form1.cleaned_data)
-                return HttpResponseRedirect('../asignar_curso/')
+                form1 = LlevaCursoRegisterForm()
+                context = {'form1': form1, "message":"Asignacion de curso completada"}
+                return render(request, 'usuarios/asignar_curso.html', context)
         else:
             form1 = LlevaCursoRegisterForm()
         context = {'form1': form1}

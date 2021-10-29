@@ -66,6 +66,11 @@
     {% endif %}
 </ul>
 <h5 class="username">{{user.first_name}} {{user.last_name}}</h5>
+<script type="text/javascript">
+	if ('{{ message }}' != '') {
+		alert('{{ message }}')
+	}
+</script>
 {% block content%}
 
 {% endblock content %}
