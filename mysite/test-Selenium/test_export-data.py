@@ -29,12 +29,21 @@ class TestExportdata():
   def test_exportdata(self):
     # Test name: export_data
     # Step # | name | target | value
+
+    ''' 
+    Given: La sección de control de pagos
+    '''
+
     # 1 | open | /pagos/control/ | 
     self.driver.get("https://plus-academy.herokuapp.com/pagos/control/")
     # 2 | setWindowSize | 1258x718 | 
     self.driver.set_window_size(1258, 718)
     # 3 | click | linkText=Control de Pagos | 
     self.driver.find_element(By.LINK_TEXT, "Control de Pagos").click()
+
+    '''
+    When: Se requiere generar un archivo de excel con la información presentada en la sección de pagos
+    '''
     # 4 | click | css=.buttons-print > span | 
     self.vars["window_handles"] = self.driver.window_handles
     # 5 | storeWindowHandle | root | 
@@ -49,9 +58,18 @@ class TestExportdata():
     self.driver.close()
     # 10 | click | css=.buttons-excel > span | 
     self.driver.switch_to.window(self.vars["root"])
+
+    '''
+    Then: Se seleccionan las fechas de las cuales se quiere obtener el reporte
+    '''
+
     # 11 | click | css=.buttons-csv > span | 
     self.driver.find_element(By.CSS_SELECTOR, ".buttons-pdf").click()
     # 12 | click | css=.buttons-copy > span | 
+    
+    '''
+    And: Se genera un archivo de excel, csv o pdf con la información de pagos de las fechas seleccionadas
+    '''
     self.driver.find_element(By.CSS_SELECTOR, ".buttons-excel > span").click()
     self.driver.find_element(By.CSS_SELECTOR, ".buttons-csv > span").click()
     self.driver.find_element(By.CSS_SELECTOR, ".buttons-copy > span").click()
