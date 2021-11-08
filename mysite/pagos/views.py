@@ -443,6 +443,7 @@ def cobros_extra_a_curso(request):
     else:
         return HttpResponseRedirect('../pagos/login/')
 
+@login_required(login_url='/usuarios/login/')
 def ingreso_tipo_gasto(request):
     if request.user.is_authenticated:
         if request.method == "POST":
