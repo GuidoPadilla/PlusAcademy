@@ -16,15 +16,16 @@ from django.core.serializers import serialize
 import json
 
 # Create your views here.
+@login_required@login_required
 def control_view(request):
     return render(request, 'pagos/control.html')
-
+@login_required
 def caja_chica_view(request):
     return render(request, 'pagos/caja_chica.html')
-    
+@login_required
 def pivote_view(request):
     return render(request, 'pagos/pivote.html')
-
+@login_required
 def pivote(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -66,10 +67,10 @@ def pivote(request):
         response_data['result'] = 'ERROR'
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')
-
+@login_required
 def saldo_view(request):
     return render(request, 'pagos/saldo_consulta.html')
-
+@login_required
 def pagos(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -128,7 +129,7 @@ def pagos(request):
         response_data['result'] = 'ERROR'
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')
-
+@login_required
 def solicitarEliminacionPago(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -147,10 +148,10 @@ def solicitarEliminacionPago(request):
             response_data = {}
             response_data['result'] = 'CONFIRMADO'
             return JsonResponse(response_data)
-
+@login_required
 def pagos_solicitados_eliminar_view(request):
     return render(request, 'pagos/pagos_solicitados_eliminar.html')
-
+@login_required
 def solicitud_eliminacion_pago(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -191,10 +192,10 @@ def solicitud_eliminacion_pago(request):
         response_data['result'] = 'ERROR'
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')  
-
+@login_required
 def pagos_eliminados(request):
     return render(request, 'pagos/pagos_eliminados.html')
-
+@login_required
 def pagos_eliminados_list(request):
     if request.is_ajax() and request.method == 'POST':
 
@@ -209,7 +210,7 @@ def pagos_eliminados_list(request):
         response_data['result'] = 'ERROR'
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')
-
+@login_required
 def pagos_pendientes(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -236,7 +237,7 @@ def pagos_pendientes(request):
             response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
             return HttpResponse(serialize('json', response_data), content_type='application/json')
 
-
+@login_required
 def cobros_estudiante(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -263,7 +264,7 @@ def cobros_estudiante(request):
         response_data['result'] = 'ERROR'
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')
-
+@login_required
 def moneda_estudiante(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -275,7 +276,7 @@ def moneda_estudiante(request):
         response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
         return HttpResponse(serialize('json', response_data), content_type='application/json')
 
-
+@login_required
 def saldos(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -368,13 +369,14 @@ def saldos(request):
             response_data['message'] = 'AUTH OR REQUEST METHOD ERROR'
             return HttpResponse(serialize('json', response_data), content_type='application/json')
             
+@login_required
 def control_pagos(request):
     pagos = Pago.objects.all()
     context = {
         'pagos': pagos
     }
     return render(request, 'pagos/control_excel.html', context)
-
+@login_required
 def ingreso_view(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -397,7 +399,7 @@ def ingreso_view(request):
         return render(request, 'pagos/ingresar.html', context)
     else:
         return render(request, 'pagos/ingresar.html')
-
+@login_required
 def cobros_extra_view(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -414,7 +416,7 @@ def cobros_extra_view(request):
     else:
         return HttpResponseRedirect('../pagos/login/')
 
-
+@login_required
 def cobros_extra_a_curso(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -442,7 +444,7 @@ def cobros_extra_a_curso(request):
         return render(request, 'pagos/cobros_extra.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
-
+@login_required
 def ingreso_tipo_gasto(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -460,7 +462,7 @@ def ingreso_tipo_gasto(request):
         return render(request, 'pagos/ingreso_tipo_gasto.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
-
+@login_required
 def ingreso_gasto(request):
     if request.user.is_authenticated:
         if request.method == "POST":
