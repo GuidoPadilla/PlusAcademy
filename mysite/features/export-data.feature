@@ -1,5 +1,5 @@
 Feature: Exportación de datos de pago 
-        Scenario: Se desean generar archivos de excel que contengan la información de                 los pagos realizados
+        Scenario: Se desean generar archivos de excel que contengan la información de los pagos realizados
                 Given: La sección de control de pagos
                 When: Se requiere generar un archivo de excel con la información presentada en la sección de pagos
                 Then: Se seleccionan las fechas de las cuales se quiere obtener el reporte 

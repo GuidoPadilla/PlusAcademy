@@ -23,7 +23,7 @@ Feature: Ingreso de registros de pagos
 		When: El usuario solicita ingresar un pago de un libro 
 		Then: Se solicita al usuario ingresar los campos del registro de pago para el pago de un libro
 		And: Se guarda el registro en la base de datos
-	Scenario: Se desea cambiar la informacion de un pago debido a una equivocación
+	Scenario: Se desea eliminar la informacion de un pago debido a una equivocación
 		Given: La página de visualización de pagos
 		When: El usuario que administra los pagos se equivocó al ingresar un pago al estudiante equivocado.
 		Then: Se da la opción de modificar los campos. En otra instancia se puede eliminar el pago
