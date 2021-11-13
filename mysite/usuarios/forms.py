@@ -12,17 +12,15 @@ class UserRegisterForm(ModelForm):
 
     class Meta:
         model = User
-        fields= ('username', 'first_name', 'last_name', 'email')
-        '''
-        'user': forms.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-        'dpi': forms.CharField(unique=True, max_length=13)
-        'telefono': forms.CharField(unique=False, max_length=15)
-        'direccion': forms.CharField(unique=False, max_length=500)
-        'fecha de nacimiento': forms.DateField()
-        'sexo': forms.ForeignKey(Sexo, on_delete=models.CASCADE)
-        'Nivel academico': forms.ForeignKey(NivelAcademico, on_delete=models.CASCADE)
-        'Rol': forms.ForeignKey(Rol, on_delete=models.CASCADE)
-    '''
+        fields= ('username', 'first_name', 'last_name', 'email', 'is_staff')
+
+    # def __init__(self, *args, **kwargs):
+    #     # user should be popped here
+    #     user = kwargs.pop('user', None)
+    #     super(UserRegisterForm(), self).__init__(*args, **kwargs)
+    #     # just in case your user is empty
+    #     if user and not user.is_staff:
+    #        del self.fields['is_staff']
 class UserExtraRegisterForm(Form):
 
     dpi = forms.CharField()

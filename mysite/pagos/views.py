@@ -13,6 +13,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm
 from django.core.serializers import serialize
+from decorators.decorators import staff_user
 import json
 
 # Create your views here.
@@ -25,10 +26,12 @@ def caja_chica_view(request):
     return render(request, 'pagos/caja_chica.html')
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def pivote_view(request):
     return render(request, 'pagos/pivote.html')
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def pivote(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -156,10 +159,12 @@ def solicitarEliminacionPago(request):
             return JsonResponse(response_data)
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def pagos_solicitados_eliminar_view(request):
     return render(request, 'pagos/pagos_solicitados_eliminar.html')
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def solicitud_eliminacion_pago(request):
     if request.is_ajax() and request.method == 'POST':
         action = request.POST.get('action')
@@ -202,10 +207,12 @@ def solicitud_eliminacion_pago(request):
         return HttpResponse(serialize('json', response_data), content_type='application/json')  
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def pagos_eliminados(request):
     return render(request, 'pagos/pagos_eliminados.html')
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def pagos_eliminados_list(request):
     if request.is_ajax() and request.method == 'POST':
 
