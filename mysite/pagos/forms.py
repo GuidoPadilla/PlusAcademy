@@ -21,10 +21,13 @@ class TipoGastoForm(ModelForm):
         model = TipoGasto
         fields = ['nombre']
 
-class GastoForm(ModelForm):
+class GastoForm(Form):
+    fecha_gasto = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), input_formats=settings.DATE_INPUT_FORMATS)
+    tipo_gasto = forms.ModelChoiceField(queryset=TipoGasto.objects.all())
+    cantidad = forms.FloatField()
+
     class Meta:
         model = Gasto
-        fields = ['tipo_gasto', 'cantidad']
 
     def form_valid(self, form):
         form.instance.user = self.request.user

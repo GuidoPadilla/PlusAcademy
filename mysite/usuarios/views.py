@@ -12,7 +12,9 @@ from django.db import connection
 from django.core.serializers import serialize
 import datetime
 from dateutil.relativedelta import relativedelta
+from decorators.decorators import unauthenticated_user
 
+@unauthenticated_user
 def view_login(request):
     if request.user.is_authenticated != True:
         if request.method == "POST":
@@ -56,7 +58,6 @@ def view_createuser(request):
                     form2 = UserExtraRegisterForm()
                     context = {'form1': form1, 'form2': form2, "message":"Creación de usuario completado"}
                     return render(request, 'usuarios/create_user.html', context)
-
         else:
             form1 = UserRegisterForm()
             form2 = UserExtraRegisterForm()
@@ -64,7 +65,7 @@ def view_createuser(request):
         return render(request, 'usuarios/create_user.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
-
+    
 def view_creatcurso(request):
     if request.user.is_authenticated:
         if request.method == "POST":

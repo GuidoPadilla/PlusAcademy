@@ -14,7 +14,7 @@ class TipoGasto(models.Model):
         return self.nombre
 
 class Gasto(models.Model):
-    fecha_gasto = models.DateField(auto_now_add=True)
+    fecha_gasto = models.DateField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tipo_gasto = models.ForeignKey(TipoGasto, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
