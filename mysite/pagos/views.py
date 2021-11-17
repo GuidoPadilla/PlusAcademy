@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from .models import Cobro, Pago, EliminacionPagos, TipoPago, TipoGasto, Gasto
-from usuarios.models import LlevaCurso, Nacionalidad
+from usuarios.models import Curso, LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm
@@ -347,7 +347,7 @@ def saldos(request):
                                 'curso': cursoLlevado.curso.codigo})
                         if estado == 'Vencido (Pagar lo antes posible)' and cobro.tipo_pago.nombre != 'Mora':
                             if not cobros.filter(relacionado=cobro.id):
-                                Cobro.objects.create(user=cobro.user, fecha_cobro=cobro.fecha_cobro, monto=50, tipo_pago=TipoPago.objects.get(nombre='Mora'), tipo_moneda=cursoLlevado.user.userextra.nacionalidad.moneda, relacionado=cobro)
+                                Cobro.objects.create(user=cobro.user, fecha_cobro=cobro.fecha_cobro, monto=50, tipo_pago=TipoPago.objects.get(nombre='Mora'), tipo_moneda=cursoLlevado.user.userextra.nacionalidad.moneda, relacionado=cobro, codigo_curso=cursoLlevado.curso)
                                 lista.append({
                                 'desc_est': 'Nombre: '
                                                 +cursoLlevado.user.first_name+' '+cursoLlevado.user.last_name+
@@ -431,6 +431,7 @@ def cobros_extra_a_curso(request):
                         data['tipo_moneda'] = form_cobros_extra.cleaned_data['tipo_moneda']
                         data['tipo_pago'] = form_cobros_extra.cleaned_data['tipo_pago']
                         data['relacionado'] = None
+                        data['codigo_curso'] = form_cobros_extra.cleaned_data['Curso']
                         Cobro.objects.create(**data)
                         
                 form_cobros_extra = CobroExtraCursoForm()

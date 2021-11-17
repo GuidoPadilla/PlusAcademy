@@ -36,6 +36,7 @@ class CobroExtraForm(Form):
     monto = forms.FloatField()
     tipo_pago = forms.ModelChoiceField(queryset=TipoPago.objects.all())
     tipo_moneda = forms.ModelChoiceField(queryset=Moneda.objects.all())
+    codigo_curso = forms.ModelChoiceField(queryset=Curso.objects.all())
     class Meta:
         model = Cobro
         
