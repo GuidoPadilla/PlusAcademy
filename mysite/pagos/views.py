@@ -513,7 +513,7 @@ def definicion_tipo_pago(request):
         if request.method == "POST":
             form = TipoPagoForm(request.POST)
             if form.is_valid():
-                TipoPagoForm.objects.create(**form.cleaned_data)
+                TipoPago.objects.create(**form.cleaned_data)
                 form = TipoPagoForm()
                 context = {'form': form, "message":"Ingreso de tipo de pago exitoso"}
                 return render(request, 'pagos/definicion_tipo_pago.html', context)
