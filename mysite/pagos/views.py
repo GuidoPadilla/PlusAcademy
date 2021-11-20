@@ -11,7 +11,7 @@ from .models import Cobro, Pago, EliminacionPagos, TipoPago, TipoGasto, Gasto
 from usuarios.models import Curso, LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm, TipoPagoForm
+from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm
 from django.core.serializers import serialize
 from decorators.decorators import staff_user
 import json
@@ -503,22 +503,5 @@ def ingreso_gasto(request):
             form = GastoForm()
         context = {'form': form}
         return render(request, 'pagos/ingreso_gasto.html', context)
-    else:
-        return HttpResponseRedirect('../pagos/login/')
-
-@login_required(login_url='/usuarios/login/')
-def def_tipo_pago_view(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form_tipo_pago = TipoPagoForm(request.POST)
-            if form_tipo_pago.is_valid():
-                TipoPago.objects.create(**form_tipo_pago.cleaned_data)
-                form_tipo_pago = TipoPagoForm()
-                context = {'form_tipo_pago': form_tipo_pago, "message": "Ingreso de cobros extra a usuario exitoso"}
-                return render(request, 'pagos/definicion_tipo_pago.html', context)
-        else:
-            form_tipo_pago = TipoPagoForm()
-        context = {'form_tipo_pago': form_tipo_pago}
-        return render(request, 'pagos/definicion_tipo_pago.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
