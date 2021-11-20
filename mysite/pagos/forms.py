@@ -58,3 +58,8 @@ class CobroExtraCursoForm(Form):
 
     def __init__(self, *args, **kwrgs):
         super(CobroExtraCursoForm, self).__init__(*args, **kwrgs)
+
+class TipoPagoForm(ModelForm):
+    class Meta:
+        model = TipoPago
+        fields = ['nombre']
