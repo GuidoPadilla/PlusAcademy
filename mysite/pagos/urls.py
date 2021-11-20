@@ -25,8 +25,4 @@ urlpatterns = [
     path('ingreso_tipo_gasto/', views.ingreso_tipo_gasto, name='ingreso_tipo_gasto'),
     path('ingreso_gasto/', views.ingreso_gasto, name='ingreso_gasto'),
     path('pantalla_pivote/', views.pivote_view, name='pantalla_pivote'),
-<<<<<<< HEAD
-    path('definicion_tipo_pago/', views.tipo_pago_view, name='definicion_tipo_pago'),
-=======
->>>>>>> parent of 8c4da11 (definicion tipo de pago v0.1)
 ]

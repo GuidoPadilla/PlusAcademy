@@ -505,24 +505,3 @@ def ingreso_gasto(request):
         return render(request, 'pagos/ingreso_gasto.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
-<<<<<<< HEAD
-
-
-@login_required(login_url='/usuarios/login/')
-def tipo_pago_view(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form_tipo_pago = TipoPagoForm(request.POST)
-            if form_tipo_pago.is_valid():
-                TipoPago.objects.create(**form_tipo_pago.cleaned_data)
-                form_tipo_pago = TipoPagoForm()
-                context = {'form_tipo_pago': form_tipo_pago, "message": "Ingreso de cobros extra a usuario exitoso"}
-                return render(request, 'pagos/definicion_tipo_pago.html', context)
-        else:
-            form_tipo_pago = TipoPagoForm()
-        context = {'form_tipo_pago': form_tipo_pago}
-        return render(request, 'pagos/definicion_tipo_pago.html', context)
-    else:
-        return HttpResponseRedirect('../pagos/login/')
-=======
->>>>>>> parent of 8c4da11 (definicion tipo de pago v0.1)

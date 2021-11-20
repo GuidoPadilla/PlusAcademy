@@ -56,7 +56,5 @@ class CobroExtraCursoForm(Form):
     tipo_moneda = forms.ModelChoiceField(queryset=Moneda.objects.all())
 
 
-
-
     def __init__(self, *args, **kwrgs):
         super(CobroExtraCursoForm, self).__init__(*args, **kwrgs)

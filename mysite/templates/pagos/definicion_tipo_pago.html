@@ -1,0 +1,19 @@
+
+
+{% extends 'base_datatable.html' %}
+
+{% block content %}
+
+<div class="container">
+	<form action="" method="post" class="input-form">
+		<div class="form-title-container"><h4 class="form-title">Definir tipo de pago</h4></div>
+				{% csrf_token %}
+				{{form_cobros_extra}}
+		<div class="btn-container">
+			<input class="btn btn-buscar" type="submit" value="Crear">
+		</div>
+	</form>
+</div>
+</form>
+
+{% endblock content %}
