@@ -54,3 +54,8 @@ class CursoRegisterForm(ModelForm):
     class Meta:
         model = Curso
         fields = ['codigo', 'nombre', 'inscripcion_quetzales', 'cuota_quetzales', 'inscripcion_dolares', 'cuota_dolares', 'duracion']
+
+class DefNivelAcaForm(ModelForm):
+    class Meta:
+        model = NivelAcademico
+        fields= ('nombre')

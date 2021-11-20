@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm
+from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm, DefNivelAcaForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .models import Curso, UserExtra, LlevaCurso
+from .models import Curso, UserExtra, LlevaCurso, NivelAcademico
 from pagos.models import Cobro, Moneda, TipoPago
 from django.db import connection
 from django.core.serializers import serialize
@@ -34,16 +34,19 @@ def view_login(request):
     else:
         return HttpResponseRedirect('../../pagos/control/')
 
+@login_required(login_url='/usuarios/login/')
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('../../usuarios/login/')
 
+@login_required(login_url='/usuarios/login/')
 def lista_usuarios(request):
     if request.is_ajax() and request.method == 'POST':
         users = UserExtra.objects.all()
         users = users.filter(rol__nombre='estudiante')
         return JsonResponse({"data":[x.toDict() for x in users]}, safe=False) 
 
+@login_required(login_url='/usuarios/login/')
 def view_createuser(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -65,7 +68,8 @@ def view_createuser(request):
         return render(request, 'usuarios/create_user.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
-    
+
+@login_required(login_url='/usuarios/login/')
 def view_creatcurso(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -81,6 +85,7 @@ def view_creatcurso(request):
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
+@login_required(login_url='/usuarios/login/')
 def view_createasignacion(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -114,5 +119,22 @@ def view_createasignacion(request):
     else:
         return HttpResponseRedirect('../usuarios/login/')
 
+@login_required(login_url='/usuarios/login/')
 def view_usuarios(request):
     return render(request, 'usuarios/control.html')
+
+@login_required(login_url='/usuarios/login/')
+def definicion_nivel_academico_view(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = DefNivelAcaForm(request.POST)
+            if form.is_valid():
+                NivelAcademico.objects.create(**form.cleaned_data)
+                context = {'form': form, "message":"Definición de nivel academico"}
+                return render(request, 'usuarios/definicion_nivel_aca.html', context)
+        else:
+            form = DefNivelAcaForm()
+        context = {'form': form}
+        return render(request, 'usuarios/definicion_nivel_aca.html', context)
+    else:
+        return HttpResponseRedirect('../usuarios/login/')
