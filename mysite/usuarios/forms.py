@@ -58,4 +58,4 @@ class CursoRegisterForm(ModelForm):
 class DefNivelAcaForm(ModelForm):
     class Meta:
         model = NivelAcademico
-        fields= ('nombre')
+        fields= ['nombre']
