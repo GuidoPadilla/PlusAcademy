@@ -25,5 +25,5 @@ urlpatterns = [
     path('ingreso_tipo_gasto/', views.ingreso_tipo_gasto, name='ingreso_tipo_gasto'),
     path('ingreso_gasto/', views.ingreso_gasto, name='ingreso_gasto'),
     path('pantalla_pivote/', views.pivote_view, name='pantalla_pivote'),
-    path('definicion_tipo_pago/', views.def_tipo_pago_view, name='definicion_tipo_pago_view'),
+    path('definicion_tipo_pago/', views.tipo_pago_view, name='definicion_tipo_pago_view'),
 ]
