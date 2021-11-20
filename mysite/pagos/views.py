@@ -11,7 +11,7 @@ from .models import Cobro, Pago, EliminacionPagos, TipoPago, TipoGasto, Gasto
 from usuarios.models import Curso, LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm, TipoPagoForm
+from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm
 from django.core.serializers import serialize
 from decorators.decorators import staff_user
 import json
@@ -505,6 +505,7 @@ def ingreso_gasto(request):
         return render(request, 'pagos/ingreso_gasto.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
+<<<<<<< HEAD
 
 
 @login_required(login_url='/usuarios/login/')
@@ -523,3 +524,5 @@ def tipo_pago_view(request):
         return render(request, 'pagos/definicion_tipo_pago.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
+=======
+>>>>>>> parent of 8c4da11 (definicion tipo de pago v0.1)
