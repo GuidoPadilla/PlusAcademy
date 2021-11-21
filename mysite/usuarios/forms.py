@@ -29,13 +29,37 @@ class UserExtraRegisterForm(Form):
     fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), input_formats=settings.DATE_INPUT_FORMATS)
     sexo = forms.ModelChoiceField(queryset=Sexo.objects.all())
     nivel_academico = forms.ModelChoiceField(queryset=NivelAcademico.objects.all())
-    rol = forms.ModelChoiceField(queryset=Rol.objects.all())
+    rol = forms.ModelChoiceField(queryset=Rol.objects.filter(codigo=2))
     nacionalidad = forms.ModelChoiceField(queryset=Nacionalidad.objects.all())
 
 
     class Meta:
         model = UserExtra
         # fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol', 'nacionalidad']
+
+class StudentRegisterForm(ModelForm):
+
+    class Meta:
+        model = User
+        fields= ('username', 'first_name', 'last_name', 'email')
+
+
+class StudentExtraRegisterForm(Form):
+
+    dpi = forms.CharField()
+    telefono = forms.CharField()
+    direccion = forms.CharField()
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), input_formats=settings.DATE_INPUT_FORMATS)
+    sexo = forms.ModelChoiceField(queryset=Sexo.objects.all())
+    nivel_academico = forms.ModelChoiceField(queryset=NivelAcademico.objects.all())
+    rol = forms.ModelChoiceField(queryset=Rol.objects.filter(codigo=1))
+    nacionalidad = forms.ModelChoiceField(queryset=Nacionalidad.objects.all())
+
+
+    class Meta:
+        model = UserExtra
+        # fields = ['dpi', 'telefono', 'direccion', 'fecha_nacimiento', 'sexo', 'nivel_academico', 'rol', 'nacionalidad']
+
 
 class LlevaCursoRegisterForm(Form):
 

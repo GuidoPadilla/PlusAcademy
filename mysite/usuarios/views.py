@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm, DefNivelAcaForm
+from .forms import AuthenticationAddForm, UserRegisterForm, UserExtraRegisterForm, LlevaCursoRegisterForm, CursoRegisterForm, DefNivelAcaForm, StudentRegisterForm, StudentExtraRegisterForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -12,7 +12,7 @@ from django.db import connection
 from django.core.serializers import serialize
 import datetime
 from dateutil.relativedelta import relativedelta
-from decorators.decorators import unauthenticated_user
+from decorators.decorators import unauthenticated_user, staff_user
 
 @unauthenticated_user
 def view_login(request):
@@ -47,6 +47,7 @@ def lista_usuarios(request):
         return JsonResponse({"data":[x.toDict() for x in users]}, safe=False) 
 
 @login_required(login_url='/usuarios/login/')
+@staff_user
 def view_createuser(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -66,6 +67,29 @@ def view_createuser(request):
             form2 = UserExtraRegisterForm()
         context = {'form1': form1, 'form2': form2}
         return render(request, 'usuarios/create_user.html', context)
+    else:
+        return HttpResponseRedirect('../usuarios/login/')
+
+@login_required(login_url='/usuarios/login/')
+def view_createstudent(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form1 = StudentRegisterForm(request.POST)
+            form2 = StudentExtraRegisterForm(request.POST)
+            if form1.is_valid():
+                if form2.is_valid():
+                    """ form1.cleaned_data['username'] = codigo """
+                    new_user = User.objects.create_user(**form1.cleaned_data)
+                    UserExtra.objects.create(user=new_user, **form2.cleaned_data)
+                    form1 = UserRegisterForm()
+                    form2 = UserExtraRegisterForm()
+                    context = {'form1': form1, 'form2': form2, "message":"Creación de usuario completado"}
+                    return render(request, 'usuarios/create_student.html', context)
+        else:
+            form1 = StudentRegisterForm()
+            form2 = StudentExtraRegisterForm()
+        context = {'form1': form1, 'form2': form2}
+        return render(request, 'usuarios/create_student.html', context)
     else:
         return HttpResponseRedirect('../usuarios/login/')
 

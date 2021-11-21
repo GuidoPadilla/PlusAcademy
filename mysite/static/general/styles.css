@@ -139,7 +139,6 @@ td, th {
   border-top-width: 0;
   border-bottom-width: 0;
   border-left-width: 10%;
-  border-style: double;
   padding-left: 1%;
   padding-right: 2%;
   padding-top: 0%;
@@ -186,7 +185,6 @@ td, th {
 .input-form .form-title-container
 {
   border: #c0ca4f;
-  border-style: double;
   border-right-width: 0;
   border-top-width: 0;
   border-bottom-width: 1%;

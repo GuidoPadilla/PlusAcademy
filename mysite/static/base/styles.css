@@ -78,7 +78,7 @@
 .username {
   z-index: 2;
   opacity: 0.2;
-  position: absolute;
+  position: fixed;
   bottom:0;
   right:0;
   margin-right:25px;

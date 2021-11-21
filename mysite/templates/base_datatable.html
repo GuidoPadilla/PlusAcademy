@@ -57,7 +57,8 @@
                 <li class="dropbtn item-title">Usuarios</li>
                 <div class="dropdown-content">
                     <a class="navbar-a" href="{% url 'usuarios:usuarios_listado' %}">Listado</a>
-                    <a class="navbar-a" href="{% url 'usuarios:createuser_view' %}">Ingreso Usuario</a>
+                    <a class="navbar-a" href="{% url 'usuarios:createuser_view' %}">Ingreso Operativo</a>
+                    <a class="navbar-a" href="{% url 'usuarios:createstudent_view' %}">Ingreso Estudiante</a>
                     <a class="navbar-a" href="{% url 'usuarios:create_curso' %}">Crear Curso</a>
                     <a class="navbar-a" href="{% url 'usuarios:asignar_curso' %}">Asignar Curso</a>
                     <a class="navbar-a" href="{% url 'usuarios:definir_nivel_academico' %}">Definir nivel academico</a>
