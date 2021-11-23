@@ -33,21 +33,21 @@
         <table class="styled-table">
             <thead>
                 <tr>
-                    <th>Codigo de curso</th>
-                    <th>Cobro</th>
-                    <th>Monto</th>
+                    <th>Código de Estudiante</th>
+                    <th>Nombre de Estudiante</th>
+                    <th>Código de Curso</th>
                     <th>Moneda</th>
-                    <th>Fecha de cobro</th>
+                    <th>TOTAL</th>
                 </tr>
             </thead>
             <tbody>
-                {% for row in cobros %}
+                {% for row in datos %}
                     <tr>    
-                        <td>{{ row.codigo_curso }}</td>
-                        <td>{{ row.tipo_pago }}</td>
-                        <td>{{ row.monto }}</td>
-                        <td>{{ row.tipo_moneda }}</td>
-                        <td>{{ row.fecha_cobro }}</td>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.nombre }}</td>
+                        <td>{{ row.curso }}</td>
+                        <td>{{ row.moneda }}</td>
+                        <td>{{ row.total }}</td>
                     </tr>
                 {% endfor %}
             </tbody> 

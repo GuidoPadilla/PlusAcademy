@@ -27,4 +27,5 @@ urlpatterns = [
     path('pantalla_pivote/', views.pivote_view, name='pantalla_pivote'),
     path('definicion_tipo_pago/', views.definicion_tipo_pago, name='definicion_tipo_pago'),
     path('correos_saldos/', views.correos_saldos, name='correos_saldos'),
+    path('correos_morosos/', views.correos_morosos, name='correos_morosos'),
 ]

@@ -538,14 +538,15 @@ def correos_saldos(request):
             cursosUsuario = cursosLlevados.filter(user__username=user.username)
             for curso in cursosUsuario:
                 cobrosUsuario = cobros.filter(user__username=curso.user.username)
+                cobrosUsuario = cobrosUsuario.filter(codigo_curso__codigo=curso.curso.codigo)
                 cobrosUsuario = cobrosUsuario.order_by('-fecha_cobro')
                 total_deuda = cobrosUsuario.aggregate(Sum('monto'))['monto__sum']
-                context = {"cobros": cobrosUsuario, "total_deuda": total_deuda}
+                context = {"cobros": cobrosUsuario, "total_deuda": total_deuda, "mensaje": 'A continuación se le ha enviado su estado de cuenta ' + user.first_name + ' ' + user.last_name + ', en el curso: ' + curso.curso.codigo + curso.curso.nombre}
                 template = get_template('correo.html')
                 content = template.render(context)
                 email = EmailMultiAlternatives(
-                    'Estado de cuenta PlusAcademy',
-                    'A continuación se le ha enviado su estado de cuenta ' + user.first_name + ' ' + user.last_name,
+                    'Estado de cuenta PlusAcademy, curso: ' + curso.curso.codigo + curso.curso.nombre,
+                    'A continuación se le ha enviado su estado de cuenta ' + user.first_name + ' ' + user.last_name + ', en el curso: ' + curso.curso.codigo + curso.curso.nombre,
                     settings.EMAIL_HOST_USER,
                     [user.email]
                 )
@@ -554,3 +555,36 @@ def correos_saldos(request):
         context = {"message":"Envio de estados de cuenta a correos de estudiantes exitoso"}
         return render(request, 'pagos/correos_saldos.html', context)
     return render(request, 'pagos/correos_saldos.html')
+
+@login_required(login_url='/usuarios/login/')
+def correos_morosos(request):
+    if request.method == "POST":
+        usuarios = User.objects.all()
+        cursosLlevados = LlevaCurso.objects.all()
+        cobros = Cobro.objects.all()
+        datos = []
+        for user in usuarios:
+            cursosUsuario = cursosLlevados.filter(user__username=user.username)
+            for curso in cursosUsuario:
+                cobrosUsuario = cobros.filter(user__username=curso.user.username)
+                cobrosUsuario = cobrosUsuario.filter(codigo_curso__codigo=curso.curso.codigo)
+                cobrosUsuario = cobrosUsuario.filter(tipo_pago__nombre='Mora')
+                cobrosUsuario = cobrosUsuario.order_by('-fecha_cobro')
+                total_deuda = cobrosUsuario.aggregate(Sum('monto'))['monto__sum']
+                datos.append({"username":user.username, "nombre":user.first_name + ' ' + user.last_name, "curso":curso.curso.codigo, "total": total_deuda, "moneda":user.userextra.nacionalidad.moneda})
+        usuariosStaff = usuarios.filter(is_staff=True)
+        for user in usuariosStaff:
+            context = {"datos": datos, "mensaje":user.first_name + ' ' + user.last_name + ', a continuación se le ha enviado los estudiantes con su mora total por curso' }
+            template = get_template('correo_morosos.html')
+            content = template.render(context)
+            email = EmailMultiAlternatives(
+                'Morosos PlusAcademy '+user.username,
+                'A continuación se le ha enviado Los estudiantes con mora con su total ' + user.first_name + ' ' + user.last_name,
+                settings.EMAIL_HOST_USER,
+                [user.email]
+            )
+            email.attach_alternative(content, 'text/html')
+            email.send()
+        context = {"message":"Envio de estados de cuenta a correos de estudiantes morosos exitoso"}
+        return render(request, 'pagos/correos_morosos.html', context)
+    return render(request, 'pagos/correos_morosos.html')
