@@ -1,0 +1,13 @@
+{% extends 'base_datatable.html' %}
+
+{% block content %}
+<div class="container">
+    <form class="input-form" action="" method="post">
+        {% csrf_token %}
+        <div class="btn-container">
+            <input class="btn btn-buscar" type="submit" value="Enviar Estados de Cuenta">
+        </div>
+    </form>
+</div>
+{% endblock content %}
+

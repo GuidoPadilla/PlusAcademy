@@ -12,16 +12,24 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-
+import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env()
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!19v)3%u!1o5hszj8r_tj*tvq+l_9yjr-w3omddg#24135wauj'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,9 +90,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bzisbyjo',
-        'USER': 'bzisbyjo',
-        'PASSWORD': 'F1PYS0pIzD2gYi5yW-0Ojz5DQwUahjg1',
+        'NAME': env('DATABASE_NAME_USER'),
+        'USER': env('DATABASE_NAME_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
         'HOST': 'chunee.db.elephantsql.com',   # Or an IP Address that your DB is hosted on
         'PORT': '5432',
     }

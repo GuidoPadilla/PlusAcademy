@@ -8,12 +8,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from .models import Cobro, Pago, EliminacionPagos, TipoPago, TipoGasto, Gasto
-from usuarios.models import Curso, LlevaCurso, Nacionalidad
+from usuarios.models import ConteoAnualEstudiantes, Curso, LlevaCurso, Nacionalidad
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 from .forms import PaymentRegisterForm, CobroExtraForm, CobroExtraCursoForm, TipoGastoForm, GastoForm, TipoPagoForm
 from django.core.serializers import serialize
 from decorators.decorators import staff_user
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
 import json
 
 # Create your views here.
@@ -525,3 +527,30 @@ def definicion_tipo_pago(request):
         return render(request, 'pagos/definicion_tipo_pago.html', context)
     else:
         return HttpResponseRedirect('../pagos/login/')
+
+@login_required(login_url='/usuarios/login/')
+def correos_saldos(request):
+    if request.method == "POST":
+        usuarios = User.objects.all()
+        cursosLlevados = LlevaCurso.objects.all()
+        cobros = Cobro.objects.all()
+        for user in usuarios:
+            cursosUsuario = cursosLlevados.filter(user__username=user.username)
+            for curso in cursosUsuario:
+                cobrosUsuario = cobros.filter(user__username=curso.user.username)
+                cobrosUsuario = cobrosUsuario.order_by('-fecha_cobro')
+                total_deuda = cobrosUsuario.aggregate(Sum('monto'))['monto__sum']
+                context = {"cobros": cobrosUsuario, "total_deuda": total_deuda}
+                template = get_template('correo.html')
+                content = template.render(context)
+                email = EmailMultiAlternatives(
+                    'Estado de cuenta PlusAcademy',
+                    'A continuación se le ha enviado su estado de cuenta ' + user.first_name + ' ' + user.last_name,
+                    settings.EMAIL_HOST_USER,
+                    [user.email]
+                )
+                email.attach_alternative(content, 'text/html')
+                email.send()
+        context = {"message":"Envio de estados de cuenta a correos de estudiantes exitoso"}
+        return render(request, 'pagos/correos_saldos.html', context)
+    return render(request, 'pagos/correos_saldos.html')

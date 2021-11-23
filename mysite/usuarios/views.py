@@ -81,8 +81,8 @@ def view_createstudent(request):
                     """ form1.cleaned_data['username'] = codigo """
                     new_user = User.objects.create_user(**form1.cleaned_data)
                     UserExtra.objects.create(user=new_user, **form2.cleaned_data)
-                    form1 = UserRegisterForm()
-                    form2 = UserExtraRegisterForm()
+                    form1 = StudentRegisterForm()
+                    form2 = StudentExtraRegisterForm()
                     context = {'form1': form1, 'form2': form2, "message":"Creación de usuario completado"}
                     return render(request, 'usuarios/create_student.html', context)
         else:

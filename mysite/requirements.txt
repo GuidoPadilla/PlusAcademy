@@ -12,3 +12,4 @@ behave-django==1.4.0
 parse==1.19.0
 parse-type==0.5.2
 soupsieve==2.2.1
+django-environ==0.8.1
