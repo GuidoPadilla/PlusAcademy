@@ -12,7 +12,11 @@ class UserRegisterForm(ModelForm):
 
     class Meta:
         model = User
-        fields= ('username', 'first_name', 'last_name', 'email', 'is_staff')
+        fields= ('username', 'password', 'first_name', 'last_name', 'email', 'is_staff')
+        widgets = {
+            # telling Django your password field in the mode is a password input on the template
+            'password': forms.PasswordInput() 
+        }
 
     # def __init__(self, *args, **kwargs):
     #     # user should be popped here
