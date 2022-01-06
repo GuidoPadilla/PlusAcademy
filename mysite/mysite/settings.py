@@ -34,7 +34,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['plus-academy.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['plus-academy.herokuapp.com','127.0.0.1','www.plusacademygt.com','plusacademygt.com']
 
 
 # Application definition
